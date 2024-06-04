@@ -27,7 +27,7 @@ function App() {
   const [isGridFull, setIsGridFull] = useState(false);
   const [linesCount, setLinesCount] = useState(0);
   const [gameEnded,setGameEnded]=useState(false);
-  const [gameReset,setGameReset]=useState(false);
+  // const [gameReset,setGameReset]=useState(false);
 
   const word = wordsMapping[gridSizeRef];
   //making a peer
@@ -66,11 +66,7 @@ function App() {
     checkIfWon();
     console.log(won);
   }, [linesCount,won]);
-  //Reset the game
-  useEffect(()=>{
-    ResetGame();
-    console.log(gameReset);
-    },[gameReset]);
+
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -80,6 +76,8 @@ function App() {
         setConnections(prevState => [...prevState, { id: secondKey, ready: false }]);
         connRef.current=conn;
       }
+      console.log(peerRef);
+      console.log(connRef);
       connRef.current.on("open", () => {
         setIsConnected(true);
         connRef.current?.send({ id: "gs", content: gridSizeRef });
@@ -116,7 +114,7 @@ function App() {
         setWon(gameData.content as boolean);
         break;
       case "rg":
-          setGameReset(prev=>!prev);
+          ResetGame()
           break;    
       default:
         break;
@@ -168,7 +166,7 @@ function App() {
     }
   };
   function checkIsNotAlreadyStriked(rowIndex: number, colIndex: number){
-    return gridInfoRef.current[rowIndex][colIndex]
+    return !gridInfoRef.current[rowIndex][colIndex].struck;
   }
   const checkForLines = () => {
     let count = 0;
@@ -202,10 +200,15 @@ function App() {
 
     setLinesCount(count);
   };
-
-  const ResetGame = () => {
+  function sendResetSignal(){
     connRef.current?.send({"id":"rg","content":null});
     connRefPlayer2.current?.send({"id":"rg","content":null});
+  }
+  function resetAndSendSignal(){
+    sendResetSignal();
+    ResetGame()
+  }
+  const ResetGame = () => {
     gridInfoRef.current=Array(gridSizeRef).fill(null).map(() => Array(gridSizeRef).fill({ number: '', struck: false } as GridData));
     setCurrentNumber(1);
     setIsGridFull(false);
@@ -254,6 +257,8 @@ function App() {
   const leaveGame = () => {
     connRef.current?.close();
     connRefPlayer2.current?.close();
+    connRef.current=null;
+    connRefPlayer2.current=null;
     resetConnectionState();
   };
 
@@ -319,10 +324,10 @@ function App() {
              </div>
            )}
            {isConnected && <WordWithStrikes word={word} linesCount={linesCount} />}
-           {gameEnded && won===true && <><h2>You Win!</h2><br/><button onClick={ResetGame}>Reset</button></>}
-           {gameEnded && won===false && <><h2>You Lose</h2><br/><button onClick={ResetGame}>Reset</button></>}
+           {gameEnded && won===true && <><h2>You Win!</h2><br/><button onClick={resetAndSendSignal}>Reset</button></>}
+           {gameEnded && won===false && <><h2>You Lose</h2><br/><button onClick={resetAndSendSignal}>Reset</button></>}
            {isGridFull && !allReady && !selfReady && <ReadySignal readySignal={readySignal} />}
-           {!allReady && selfReady && <p>Waiting for other players....</p>}
+           {!allReady && selfReady && isConnected && <p>Waiting for other players....</p>}
            {allReady && !gameEnded && <h4>Game Started!</h4>}
            {allReady && !gameEnded && (yourTurn===true ? <p>It's your turn</p> : <p>It's opponent's turn</p>)}
          </>
