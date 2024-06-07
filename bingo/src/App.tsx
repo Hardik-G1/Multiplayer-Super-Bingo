@@ -27,7 +27,7 @@ function App() {
   const [isGridFull, setIsGridFull] = useState(false);
   const [linesCount, setLinesCount] = useState(0);
   const [gameEnded,setGameEnded]=useState(false);
-  // const [gameReset,setGameReset]=useState(false);
+
 
   const word = wordsMapping[gridSizeRef];
   //making a peer
@@ -165,6 +165,7 @@ function App() {
       checkForLines();
     }
   };
+
   function checkIsNotAlreadyStriked(rowIndex: number, colIndex: number){
     return !gridInfoRef.current[rowIndex][colIndex].struck;
   }
@@ -226,6 +227,8 @@ function App() {
     setGridSizeLock(false);
     setIsConnected(false);
     setAllReady(false);
+    setSelfReady(false);
+    setIsGridFull(false);
   };
 
   const updateGridForPlayerTwo = (number: string) => {
@@ -283,7 +286,35 @@ function App() {
     connRef.current?.send({ id: "tn", content: rndNum >= 0.5 });
   };
 
+  function randomFill(){
+   
+    gridInfoRef.current=Array(gridSizeRef).fill(null).map(() => Array(gridSizeRef).fill({ number: '', struck: false } as GridData)) as GridData[][];
+      // Create an array of numbers from 1 to n^2
+      let numbers = Array.from({ length: gridSizeRef*gridSizeRef }, (_, i) => i + 1);
+  
+      // Shuffle the numbers array using Fisher-Yates algorithm
+      for (let i = numbers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+      }
 
+      // Initialize an empty array to hold the matrix
+      let matrix = [];
+
+      // Fill the matrix with the shuffled numbers
+      for (let i = 0; i < gridSizeRef; i++) {
+          let row = [];
+          for (let j = 0; j < gridSizeRef; j++) {
+             let data={"number":"1","struck":false} as GridData;
+              data.number=numbers[i * gridSizeRef + j].toString();
+              row.push(data);
+          }
+          matrix.push(row);
+      }
+      gridInfoRef.current=matrix as GridData[][];
+      setIsGridFull(prev=>!prev);
+
+  }
 
   const handleGridSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = parseInt(event.target.value, 10) as GridSize;
@@ -327,6 +358,7 @@ function App() {
            {gameEnded && won===true && <><h2>You Win!</h2><br/><button onClick={resetAndSendSignal}>Reset</button></>}
            {gameEnded && won===false && <><h2>You Lose</h2><br/><button onClick={resetAndSendSignal}>Reset</button></>}
            {isGridFull && !allReady && !selfReady && <ReadySignal readySignal={readySignal} />}
+           {!selfReady && isConnected && <button onClick={randomFill}>Random Fill</button>}
            {!allReady && selfReady && isConnected && <p>Waiting for other players....</p>}
            {allReady && !gameEnded && <h4>Game Started!</h4>}
            {allReady && !gameEnded && (yourTurn===true ? <p>It's your turn</p> : <p>It's opponent's turn</p>)}
@@ -334,7 +366,9 @@ function App() {
       
       <br />
       {isConnected ? (
+        <>
         <button onClick={leaveGame}>Leave Game</button>
+        </>
       ) : (
         <div>
           <button onClick={setupGame}>Setup a Game</button>
@@ -355,235 +389,3 @@ function App() {
 }
 
 export default App;
-
-
-// import React, { useState, useEffect, useRef } from 'react';
-// import './App.css';
-// import { DataConnection, Peer } from "peerjs";
-// import { v4 as uuidv4 } from 'uuid';
-// import { Grid, GridSize } from './Grid';
-// import { GameInfo } from './GameInfo';
-
-// interface ConnectionsData {
-//   id: string,
-//   ready: boolean
-// }
-
-// interface GameData {
-//   id: string,
-//   content: any
-// }
-// export interface GridData{
-//   number:string,
-//   struck:boolean
-// }
-// function App() {
-//   const [gridSize, setGridSize] = useState<GridSize>(5);
-//   const [gridInfo,setGridInfo]=useState<GridData[][]>(Array(5).fill(null).map(() => Array(5).fill({"number":'',"struck":false} as GridData)));
-//   const [gridSizeLock, setGridSizeLock] = useState(false);
-//   const [secondKey, setSecondKey] = useState("");
-//   const [userKey, setUserKey] = useState(uuidv4());
-//   const peerRef = useRef<Peer | null>(null);
-//   const connRef = useRef<DataConnection | null>(null);
-//   const connRefPlayer2 = useRef<DataConnection | null>(null);
-//   const [isConnected, setIsConnected] = useState(false);
-//   const [isOrganiser, setIsOrganiser] = useState(0);
-//   const [connections, setConnections] = useState<ConnectionsData[]>([{ id: userKey, ready: false }]);
-//   const [allReady, setAllReady] = useState(false);
-//   const [selfReady, setSelfReady]=useState(false);
-//   const [yourTurn, setYourTurn]=useState(false);
-//   useEffect(() => {
-//     const newGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData));
-//     setGridInfo(newGrid);
-//   }, [gridSize, setGridInfo]);
-//   useEffect(() => {
-//     if (peerRef.current === null) {
-//       const peer = new Peer(userKey);
-//       peerRef.current = peer;
-//     }
-//     peerRef.current?.on("connection", (conn) => {
-//       if (connRefPlayer2.current === null) {
-//         connRefPlayer2.current = conn;
-//         console.log("Connected to:", conn.peer.toString());
-//         let connId = conn.peer.toString();
-//         setConnections(prevState => ([
-//           ...prevState,
-//           { id: connId, ready: false }
-//         ]));
-//       }
-//       conn.on("data", (data) => {
-//         console.log("Received data:", data);
-//         handleGameData(data)
-//       });
-//       conn.on("open", () => {
-//         conn.send("hello from " + userKey);
-//       });
-//       conn.on("error", (error) => {
-//         console.log("Connection error:", error);
-//         setIsOrganiser(0);
-//         setGridSizeLock(false);
-//         setIsConnected(false);
-//       });
-//       conn.on("close", () => {
-//         setIsOrganiser(0);
-//         setGridSizeLock(false);
-//         setIsConnected(false);
-//         setAllReady(false);
-//       });
-//     });
-//   }, []);
-
-//   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-//     event.preventDefault();
-//     if (peerRef.current) {
-//       if (connRef.current === null) {
-//         const conn = peerRef.current.connect(secondKey);
-//         setConnections(prevState => ([
-//           ...prevState,
-//           { id: secondKey, ready: false }
-//         ]));
-//         connRef.current = conn;
-//       }
-//       connRef.current.on("open", () => {
-//         console.log("Connected to peer:", secondKey);
-//         setIsConnected(true);
-//         let sGridSize: GameData = { id: "gs", content: gridSize };
-//         connRef.current?.send(sGridSize);
-//         setGridSizeLock(true);
-//       });
-//       connRef.current.on("data", (data) => {
-//         console.log("Received data:", data);
-//         handleGameData(data)
-//       });
-//       connRef.current.on("error", (error) => {
-//         console.log("Connection error:", error);
-//         setIsOrganiser(0);
-//         setGridSizeLock(false);
-//         setIsConnected(false);
-//       });
-//       connRef.current.on("close", () => {
-//         setIsOrganiser(0);
-//         setGridSizeLock(false);
-//         setIsConnected(false);
-//         setAllReady(false);
-//       });
-//     }
-//   };
-
-//   const handleGameData = (data: any) => {
-//     let stringValue: GameData = data as GameData;
-//     if (stringValue["id"] == "gs") {
-//       setGridSize(parseInt(stringValue.content) as GridSize);
-//       setGridSizeLock(true);
-//       setIsConnected(true);
-//     } else if (stringValue["id"] == "rs") {
-//       let data = stringValue.content as ConnectionsData;
-//       setConnections(prevState => prevState.map(item =>
-//         item.id === data.id ? { ...item, ready: data.ready } : item
-//       ));
-//     } else if (stringValue["id"]==="tn"){
-//       let data=stringValue.content as boolean;
-//       if(!data){
-//         setYourTurn(true);
-//       } 
-//     } else if (stringValue["id"]==="ni"){
-//       let data=stringValue.content as string;
-//       updateGridForPlayerTwo(data);
-//     }
-//   };  
-
-// console.log(gridInfo);//why this becomes blank when this 
-//   function updateGridForPlayerTwo(number: string){
-//     const newGridInfo=gridInfo.map((row, rowIndex) =>
-//       row.map((cell, colIndex) =>
-//         gridInfo[rowIndex][colIndex].number === number ?  {"number":cell.number,"struck":true} : cell
-//       )
-//     )
-//     setGridInfo(newGridInfo as GridData[][])
-//   };
-//   const readySignal = () => {
-//     setConnections(prevState => prevState.map(item =>
-//       item.id === userKey ? { ...item, ready: true } : item
-//     ));
-//     setSelfReady(true);
-//     connRef.current?.send({ "id": "rs", "content": { "id": userKey, "ready": true } });
-//     connRefPlayer2.current?.send({ "id": "rs", "content": { "id": userKey, "ready": true } });
-//   };
-// const strikeNumber=(data :String)=>{
-//   connRef.current?.send({"id":"ni","content":data});
-//  connRefPlayer2.current?.send({"id":"ni","content":data});
-//  setYourTurn(prevState=>!prevState);
-//  if(yourTurn){
-//   connRef.current?.send({"id":"tn","content":false});
-//   connRefPlayer2.current?.send({"id":"tn","content":false});
-//  }
-// }
-//   const leaveGame = () => {
-//     connRef.current?.close();
-//     connRefPlayer2.current?.close();
-//     setAllReady(false);
-
-//   };
-
-
-//   const setupGame = () => {
-//     setIsOrganiser(1);
-//   };
-
-//   const joinGame = () => {
-//     setIsOrganiser(2);
-//   };
-
-//   const CheckAllReady = () => {
-//     if (connections.every(s => s.ready)) {
-//       setAllReady(true);
-//       toss()
-//     }
-//   };
-//   const toss=()=>{
-//     let rndNum=Math.random();
-//     if (rndNum>=0.5){
-//       setYourTurn(true);
-//       connRef.current?.send({"id":"tn","content":true});
-//     }else{
-//       connRef.current?.send({"id":"tn","content":false});
-//     }
-//   }
-//   useEffect(() => {
-//     CheckAllReady();
-//   }, [connections]);
-//   const handleGridSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-//     const newSize = parseInt(event.target.value, 10) as GridSize;
-//     setGridSize(newSize);
-//   };
-//   return (
-//     <div className="App">
-//       <h1>Grid Input App</h1>
-//       {!gridSizeLock && <div>
-//         <label htmlFor="grid-size">Select Grid Size: </label>
-//         <select id="grid-size" value={gridSize} onChange={handleGridSizeChange}>
-//           {[5, 6, 7, 8, 9, 10].map(size => (
-//             <option key={size} value={size}>{size}</option>
-//           ))}
-//         </select>
-//       </div>}
-//       {isConnected && <Grid isConnected={isConnected}  allReady={allReady}  gridSize={gridSize}  readySignal={readySignal} selfReady={selfReady} 
-//       gridInfo={gridInfo}
-//       setGridInfo={setGridInfo}
-//       yourTurn={yourTurn} 
-//       strikeNumber={strikeNumber} />}
-//       <br />
-//       {isConnected ? <button onClick={leaveGame}>Leave Game</button> : 
-//       <div>
-//         <button onClick={setupGame}>Setup a Game</button>
-//         <button onClick={joinGame}>Join a Game</button>
-//       </div>}
-//       <GameInfo isOrganiser={isOrganiser} isConnected={isConnected} userKey={userKey} secondKey={secondKey} setSecondKey={setSecondKey} handleSubmit={handleSubmit} />
-      
-//       {allReady && <h4>Game Started!</h4>}
-//       {allReady && (yourTurn ? <p>It's your turn</p>: <p>It's opponent turn</p>)}
-//     </div>
-//   );
-// }
-
-// export default App;
