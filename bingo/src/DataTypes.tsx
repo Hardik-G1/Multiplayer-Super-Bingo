@@ -1,4 +1,5 @@
 export type GridSize = 5 | 6 | 7 | 8 | 9 | 10;
+export const allowedSizes=[5,6,7,8,9,10];
 export const wordsMapping: Record<number, string> = {
   5: "Bingo",
   6: "Bingo!",
