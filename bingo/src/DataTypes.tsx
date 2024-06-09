@@ -23,3 +23,8 @@ export interface GridData {
   number: string,
   struck: boolean
 }
+
+export interface SavedGridInfo{
+  name:string,
+  data:GridData[][]
+}

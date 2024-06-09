@@ -1,0 +1,51 @@
+/* styles.css */
+
+/* General container styling */
+.dropdown-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Label styling */
+.dropdown-label {
+    margin-right: 10px;
+    font-size: 16px;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+/* Dropdown select styling */
+.dropdown-select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.dropdown-select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+}
+
+/* Option styling (optional) */
+.dropdown-select option {
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+}
+select {
+    font-size: 16px;
+    padding: 5px;
+    margin-left: 10px;
+  }
+  

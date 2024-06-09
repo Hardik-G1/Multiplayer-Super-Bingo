@@ -1,0 +1,46 @@
+/* Grid container */
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 2px; /* Adds a small gap between rows */
+  }
+  
+  /* Grid row */
+  .grid-row {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Grid cell */
+  .grid-cell {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ddd; /* Slightly lighter border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    background-color: #f9f9f9; /* Light background color */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+  }
+  
+  .grid-cell:hover {
+    background-color: #e0e0e0; /* Slightly darker background on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+  }
+  
+  /* Struck-through text style */
+  .grid-cell.struck {
+    text-decoration: line-through;
+    color: #999; /* Dim the text color */
+  }
+  
+  /* Optional: Enhancing the overall appearance */
+  .grid-cell:active {
+    background-color: #d0d0d0; /* Slightly darker background on click */
+    transform: scale(0.95); /* Slightly shrink on click for a click effect */
+  }
+  
