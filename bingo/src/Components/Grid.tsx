@@ -27,6 +27,7 @@ function Grid({gridData,setGridData,isConnected,GameFinished,checkReadyorEnded,g
     },[gridSize])
     useEffect(()=>{
         checkIfGridIsFull();
+        checkForLines();
     },[gridData]);
     useEffect(() => {
         checkIfWon();

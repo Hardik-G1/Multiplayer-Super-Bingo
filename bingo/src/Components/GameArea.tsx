@@ -10,6 +10,7 @@ import { ConnectionsData } from "../DataTypes";
 import PlayerConnect from "./PlayerConnect";
 import ButtonArea from "./ButtonArea";
 import { getRandomFillData, saveGridDataInLocal } from "../Helper";
+import SavedGridsViewer from "./SavedGridsViewer";
 function GameArea(){
     const [gridSizeLock, setGridSizeLock] = useState(false);
     const [gridSize,setGridSize] = useState<GridSize>(5);
@@ -28,6 +29,7 @@ function GameArea(){
     const [won,setWon]=useState<boolean | null>(null);
     const [gameEnded,setGameEnded]=useState(false);
     const [resetGame, setResetGame]=useState(false);
+    const [showLoadScreen,setShowLoadScreen]=useState(false);
     useEffect(() => {
         checkAllReady();
         }, [connections]);
@@ -136,6 +138,7 @@ function GameArea(){
       function GameFinished(won:boolean){
         setGameEnded(true);
         if (won===false){
+            setWon(false);
             return;
         }
           setWon(true);
@@ -156,11 +159,11 @@ function GameArea(){
     
       function handleConnectionError(error: any){
         console.error("Connection error:", error);
-        resetConnectionState()
+        leaveGame()
       };
     
       const handleConnectionClose = () => {
-        resetConnectionState()
+        leaveGame()
       };
       function readySignal(){
         setConnections(prevState => prevState.map(item =>
@@ -196,16 +199,10 @@ function GameArea(){
         connRefPlayer2.current?.close();
         connRef.current=null;
         connRefPlayer2.current=null;
-        resetConnectionState();
-     }
-     function resetConnectionState(){
-        setResetGame(prev=>!prev);
+        resetAndSendSignal();
         setGridSizeLock(false);
         setIsConnected(false);
-        setAllReady(false);
-        setSelfReady(false);
-        setIsGridFull(false);
-      };
+     }
     
      function resetAndSendSignal(){
         sendResetSignal();
@@ -219,6 +216,7 @@ function GameArea(){
         setSelfReady(false);
         setGameEnded(false);
         setWon(null);
+        setCurrentNumber(1);
         setConnections(prevState => prevState.map(item =>{
           return { ...item, ready:false};
         }));
@@ -226,6 +224,9 @@ function GameArea(){
       function sendResetSignal(){
         connRef.current?.send({"id":"rg","content":null});
         connRefPlayer2.current?.send({"id":"rg","content":null});
+      }
+      function makeLoadSectionVisible(){
+        setShowLoadScreen(prev=>!prev);
       }
     return (
         <>
@@ -248,9 +249,10 @@ function GameArea(){
             />
             <PlayerConnect  isConnected={isConnected} resetGame={resetGame} handleSubmit={handleSubmit} userKey={userKey}/>
             {allReady && !gameEnded && (yourTurn===true ? <p>It's your turn</p> : <p>It's opponent's turn</p>)}
-            {won!==null && (<>{won? (<h2>You won!</h2>):(<h2>You Lose</h2>)}</>)}
+            {won!==null && (<>{ won ? (<h2>You won!</h2>):(<h2>You Lose</h2>)}</>)}
         </div>
-        <ButtonArea saveGrid={saveGrid} undo={undo} currentNumber={currentNumber} resetAndSignal={resetAndSendSignal} leaveGame={leaveGame} randomFill={randomFill} gameEnded={gameEnded} isConnected={isConnected} isGridFull={isGridFull} allReady={allReady} selfReady={selfReady} readySignal={readySignal} />
+        <ButtonArea makeLoadSectionVisible={makeLoadSectionVisible} saveGrid={saveGrid} undo={undo} currentNumber={currentNumber} resetAndSignal={resetAndSendSignal} leaveGame={leaveGame} randomFill={randomFill} gameEnded={gameEnded} isConnected={isConnected} isGridFull={isGridFull} allReady={allReady} selfReady={selfReady} readySignal={readySignal} />
+        <SavedGridsViewer setGridData={setGridData} gridSize={gridSize} showLoadScreen={showLoadScreen} />
         </>
     )
 }

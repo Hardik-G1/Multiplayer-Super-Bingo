@@ -1,0 +1,47 @@
+
+.Load-Area {
+    max-height: 75vh;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0px 10px;
+    overflow-x: auto;  
+    margin: auto;
+}
+
+  
+.grid-preview {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.grid-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-row {
+    display: flex;
+}
+
+.sagrid-cell {
+    font-size: small;
+    width: 20px; /* Adjust cell size as needed */
+    height: 20px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    margin: 1px; /* Add margin for better spacing */
+}

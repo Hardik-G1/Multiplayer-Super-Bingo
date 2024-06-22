@@ -1,5 +1,4 @@
 import React from 'react';
-
 export interface WordWithStrikesProps {
   word: string;
   linesCount: number;

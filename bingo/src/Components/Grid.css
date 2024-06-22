@@ -37,6 +37,9 @@
     text-decoration: line-through;
     color: #999; /* Dim the text color */
   }
+  .struck {
+    text-decoration: line-through;
+  }
   
   /* Optional: Enhancing the overall appearance */
   .grid-cell:active {

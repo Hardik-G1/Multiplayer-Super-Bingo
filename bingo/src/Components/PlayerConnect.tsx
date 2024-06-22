@@ -17,6 +17,11 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected}:ConnectProp
             setIsOrganiser(false);
         }
     }
+    function handleSubmitClick(e: React.FormEvent<HTMLFormElement>,secondKey:string){
+        handleSubmit(e,secondKey)
+        setIsOrganiser(null);
+        setSecondKey("");
+    }
     useEffect(()=>{
         setIsOrganiser(null);
     },[resetGame]);
@@ -31,7 +36,7 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected}:ConnectProp
             </button>
             {isOrganiser && (
                 <div id="inputSection">
-                <form onSubmit={(e)=>handleSubmit(e,secondKey)}>
+                <form onSubmit={(e)=>handleSubmitClick(e,secondKey)}>
                 <input  type="text"
                     value={secondKey}
                     onChange={(e) => setSecondKey(e.target.value)}
