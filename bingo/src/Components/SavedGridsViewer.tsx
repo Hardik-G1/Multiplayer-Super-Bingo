@@ -35,6 +35,7 @@ function SavedGridsViewer({ showLoadScreen, gridSize,setGridData }: SavedGridsVi
         showLoadScreen && (<>
             <div className="Load-Area">
             <button style={{margin:"10px"}} onClick={Refresh}>Refresh</button>
+                {grids.length===0 && <div>Nothing to load.</div>}
                 {grids.map((gridData, index) => (
                     <div key={index} className="grid-preview">
                         <div className="grid-name">{gridData.name}</div>

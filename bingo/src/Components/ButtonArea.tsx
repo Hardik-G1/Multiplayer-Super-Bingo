@@ -15,11 +15,13 @@ export interface ButtonProps {
     currentNumber:number;
     saveGrid:(name:string)=>void;
     makeLoadSectionVisible:()=>void;
+    clearGrid:()=>void;
   }
   
-function ButtonArea({readySignal,leaveGame,isGridFull,isConnected,selfReady,allReady,randomFill,gameEnded,resetAndSignal,undo,currentNumber,saveGrid,makeLoadSectionVisible}:ButtonProps){
+function ButtonArea({clearGrid,readySignal,leaveGame,isGridFull,isConnected,selfReady,allReady,randomFill,gameEnded,resetAndSignal,undo,currentNumber,saveGrid,makeLoadSectionVisible}:ButtonProps){
   const [saveBox,setSaveBox]=useState(false);
   const [name,setName]=useState("");
+  const [showLoadScreenToggle,setShowLoadScreenToggle]=useState(false);
   const [undoDisabled, setUndoDisabled]=useState(false);
   function handleSaveClick(){
     setSaveBox(prev=>!prev);
@@ -39,6 +41,7 @@ function ButtonArea({readySignal,leaveGame,isGridFull,isConnected,selfReady,allR
   },[currentNumber]);
   function handleLoadClick(){
     makeLoadSectionVisible();
+    setShowLoadScreenToggle(prev=>!prev);
   }
     return(
         <div className="App-buttons">
@@ -46,18 +49,20 @@ function ButtonArea({readySignal,leaveGame,isGridFull,isConnected,selfReady,allR
           {allReady && !gameEnded && <h4>Game Started!</h4>}
           {isGridFull && !allReady && !selfReady && <button onClick={readySignal}>Ready</button>}
           {!selfReady && isConnected && !undoDisabled && <button onClick={undo}>Undo</button>}
+          {!selfReady && isConnected && <button onClick={clearGrid}>Clear All</button>}
           {!selfReady && isConnected && <button onClick={randomFill}>Random Fill</button>}
-          {isGridFull && !allReady && !selfReady && <button onClick={handleSaveClick}>Save Grid</button>}
+          {isGridFull && !allReady && !selfReady && <button onClick={handleSaveClick}>{saveBox ? "Cancel Save":"Save Grid"}</button>}
           {saveBox && isGridFull && !allReady && !selfReady && (<div id="inputSection">
                 <form onSubmit={(e)=>handleSubmit(e,name)}>
+                  <label>Grid Name</label>
                 <input  type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter the Grid Name (will overwrite if same name present)" />
-                <button>Submit</button>
+                    placeholder="(overwrite on same name)" />
+                <button>Save Grid</button>
                 </form>
                 </div>)}
-          {isGridFull && !allReady && !selfReady && <button onClick={handleLoadClick}>Load Saved Grids</button>}
+          {isGridFull && !allReady && !selfReady && <button onClick={handleLoadClick}>{showLoadScreenToggle ?"Close Load" :"Load Saved Grids"}</button>}
           {!isGridFull && !allReady && !selfReady }
           {gameEnded && <button onClick={resetAndSignal}>Reset</button>}
           {isConnected && <button onClick={leaveGame}>Leave Game</button>}

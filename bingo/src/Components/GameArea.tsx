@@ -228,6 +228,10 @@ function GameArea(){
       function makeLoadSectionVisible(){
         setShowLoadScreen(prev=>!prev);
       }
+      function clearGrid(){
+        setGridData(Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData)));
+        setCurrentNumber(1);
+      }
     return (
         <>
         <div className="App-grid">
@@ -251,7 +255,7 @@ function GameArea(){
             {allReady && !gameEnded && (yourTurn===true ? <p>It's your turn</p> : <p>It's opponent's turn</p>)}
             {won!==null && (<>{ won ? (<h2>You won!</h2>):(<h2>You Lose</h2>)}</>)}
         </div>
-        <ButtonArea makeLoadSectionVisible={makeLoadSectionVisible} saveGrid={saveGrid} undo={undo} currentNumber={currentNumber} resetAndSignal={resetAndSendSignal} leaveGame={leaveGame} randomFill={randomFill} gameEnded={gameEnded} isConnected={isConnected} isGridFull={isGridFull} allReady={allReady} selfReady={selfReady} readySignal={readySignal} />
+        <ButtonArea  clearGrid={clearGrid} makeLoadSectionVisible={makeLoadSectionVisible} saveGrid={saveGrid} undo={undo} currentNumber={currentNumber} resetAndSignal={resetAndSendSignal} leaveGame={leaveGame} randomFill={randomFill} gameEnded={gameEnded} isConnected={isConnected} isGridFull={isGridFull} allReady={allReady} selfReady={selfReady} readySignal={readySignal} />
         <SavedGridsViewer setGridData={setGridData} gridSize={gridSize} showLoadScreen={showLoadScreen} />
         </>
     )
