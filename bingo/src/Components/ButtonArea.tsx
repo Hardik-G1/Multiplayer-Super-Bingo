@@ -94,7 +94,7 @@ function ButtonArea({
   };
 
   const renderLoadButton = () => {
-    return isGridFull && !allReady && !selfReady && (
+    return isConnected && !allReady && !selfReady && (
       <button onClick={handleLoadClick}>
         {showLoadScreenToggle ? "Close Load" : "Load Saved Grids"}
       </button>

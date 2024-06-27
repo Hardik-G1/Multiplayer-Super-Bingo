@@ -24,7 +24,7 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected}:ConnectProp
     }
     useEffect(()=>{
         setIsOrganiser(null);
-    },[resetGame]);
+    },[resetGame,isConnected]);
     return (
         <>{!isConnected &&
         <div className="container">

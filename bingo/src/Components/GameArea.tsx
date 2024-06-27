@@ -48,7 +48,7 @@ function GameArea(){
               ...prevState,
               { id: conn.peer, ready: false },
             ]);
-            setIsConnected(true);
+            setIsConnected(true); 
           }
           conn.on("data", (data) => {
             handleGameData(data);
@@ -102,7 +102,6 @@ function GameArea(){
           setYourTurn(!gameData.content);
           break;
         case "ni":
-          console.log(gridData);
           updateGridForPlayerTwo(gameData.content as string);
           break;
         case "gr":
@@ -161,6 +160,7 @@ function GameArea(){
     };
     const handleConnectionClose = () => {
       leaveGame()
+      ResetGame()
     };
     function readySignal(){
       setConnections(prevState => prevState.map(item =>
@@ -190,15 +190,15 @@ function GameArea(){
     function saveGrid(name:string){
     saveGridDataInLocal(gridData,name,gridSize);
     }
-    function leaveGame(){
-      connRef.current?.close();
-      connRefPlayer2.current?.close();
-      connRef.current=null;
-      connRefPlayer2.current=null;
-      resetAndSendSignal();
-      setGridSizeLock(false);
-      setIsConnected(false);
-    }
+    function leaveGame() {
+        setGridSizeLock(false);
+        setIsConnected(false);
+        connRef.current?.close();
+        connRefPlayer2.current?.close();
+        connRef.current = null;
+        connRefPlayer2.current = null;
+      }
+    
     function resetAndSendSignal(){
       sendResetSignal();
       ResetGame()
@@ -217,8 +217,11 @@ function GameArea(){
       }));
     };
     function sendResetSignal(){
+      if (connRef && connRef.current?.peer!==userKey){
       connRef.current?.send({"id":"rg","content":null});
+      } else if (connRefPlayer2){
       connRefPlayer2.current?.send({"id":"rg","content":null});
+      }
     }
     function makeLoadSectionVisible(){
       setShowLoadScreen(prev=>!prev);
