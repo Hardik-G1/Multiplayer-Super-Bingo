@@ -23,7 +23,7 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
         }
     }
     function handleSubmitClick(e: React.FormEvent<HTMLFormElement>,secondKey:string){
-        handleSubmit(e,secondKey)
+        handleSubmit(e,secondKey.trim())
         setIsOrganiser(null);
         setSecondKey("");
     }
