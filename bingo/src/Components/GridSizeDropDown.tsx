@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { GridSize, allowedSizes } from "../DataTypes";
 import "./GridSizeDropDown.css";
+import TimerToggle from "./TimerToggle";
 interface GridSizeDropDownProps {
     gridSize: GridSize;
     setGridSize: Dispatch<SetStateAction<GridSize>>;
@@ -17,6 +18,9 @@ function GridSizeDropDown({ gridSize, setGridSize, gridSizeLock }: GridSizeDropD
     return (
     <>
     {!gridSizeLock && (
+
+        <>
+        <TimerToggle/>
         <div className="dropdown-container">
         <label htmlFor="grid-size" className="dropdown-label">Select Grid Size: </label>
         <select id="grid-size" className="dropdown-select" value={gridSize} onChange={handleGridSizeChange}>
@@ -25,6 +29,7 @@ function GridSizeDropDown({ gridSize, setGridSize, gridSizeLock }: GridSizeDropD
           ))}
         </select>
         </div>
+</>
       )}
     </>
     );

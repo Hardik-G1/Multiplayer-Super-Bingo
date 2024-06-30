@@ -6,7 +6,6 @@ import { WordWithStrikes } from "./WordWithStrikes";
 interface GridProps {
     gridSize:GridSize
     isConnected: boolean;
-    checkReadyorEnded:()=>boolean;
     yourTurn:boolean|null;
     gridData:GridData[][];
     setGridData:Dispatch<SetStateAction<GridData[][]>>;
@@ -17,8 +16,10 @@ interface GridProps {
     resetGame:boolean;
     currentNumber:number;
     setCurrentNumber:Dispatch<SetStateAction<number>>;
+    allReady:boolean;
+    gameEnded:boolean;
   }
-function Grid({gridData,setGridData,isConnected,GameFinished,checkReadyorEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame}:GridProps){
+function Grid({gridData,setGridData,isConnected,GameFinished,allReady,gameEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame}:GridProps){
     const [linesCount, setLinesCount] = useState(0);
     const word = wordsMapping[gridSize];
     useEffect(()=>{
@@ -54,6 +55,10 @@ function Grid({gridData,setGridData,isConnected,GameFinished,checkReadyorEnded,g
     function checkForLines(){
         setLinesCount(getStraightLines(gridData));
     }
+    function checkReadyorEnded(){
+      return (!isConnected && !allReady && gameEnded);
+    }
+  
     function handleCellClick(rowIndex:number,colIndex:number){
         //provide a message to the user on disabled actions
         if(checkReadyorEnded()){

@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import "./PlayerConnect.css";
+import { GridSize } from "../DataTypes";
+import GridSizeDropDown from "./GridSizeDropDown";
 interface ConnectProps {
     userKey: string;
     handleSubmit: (event:React.FormEvent<HTMLFormElement>,key:string) => void;
     resetGame:boolean;
     isConnected: boolean;
+    gridSize:GridSize;
+    setGridSize: React.Dispatch<SetStateAction<GridSize>>;
+    gridSizeLock:boolean;
   }
-function PlayerConnect({userKey,handleSubmit,resetGame, isConnected}:ConnectProps){
+function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
 
@@ -36,6 +41,11 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected}:ConnectProp
             </button>
             {isOrganiser && (
                 <div id="inputSection">
+                    <GridSizeDropDown 
+                    gridSize={gridSize}  
+                    setGridSize={setGridSize}  
+                    gridSizeLock={gridSizeLock}
+                />
                 <form onSubmit={(e)=>handleSubmitClick(e,secondKey)}>
                 <input  type="text"
                     value={secondKey}
