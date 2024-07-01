@@ -10,19 +10,21 @@ import { WinnerIndicator } from "./WinnerIndicator";
 import { useGameStats } from "./GameStats";
 import { useGameConnnection } from "./GameConnection";
 import { useGameEndHandler } from "./GameEndHandler";
-import { GameData, GridSize } from "../DataTypes";
+import { GameData, GameSetup, GridSize } from "../DataTypes";
 import { v4 as uuidv4 } from 'uuid';
+  import { useTimer } from 'react-timer-hook';
 function GameArea(){
 
   const [userKey, _] = useState(uuidv4());
   const [gridSizeLock, setGridSizeLock] = useState(false);
   const [gridSize,setGridSize] = useState<GridSize>(5);
   const [showLoadScreen,setShowLoadScreen]=useState(false);
+  const [gameTime, setGameTime]=useState(0);
   const handleGameData = useCallback((data: any) => {
     const gameData: GameData = data as GameData;
     switch (gameData.id) {
       case "gs":
-        HandleGridSize(gameData.content as GridSize,true)
+        HandleGameSetup(gameData.content as GameSetup);
         break;
       case "rs":
         HandlePlayersReady(gameData.content.id)
@@ -116,11 +118,13 @@ function GameArea(){
   }
 
   function SendGameSetupData() {
-    console.log("run ho");
-    sendToPeer({ id: "gs", content: gridSize })
+    sendToPeer({ id: "gs", content: {"gridSize":gridSize,"time":gameTime }})
     HandleGridSize(gridSize, true);
   }
-
+function HandleGameSetup(gamedata: GameSetup){
+  HandleGridSize(gamedata.gridSize, true);
+  setGameTime(gamedata.time);
+}
   function HandleGridSize(gridSize:GridSize,lock:boolean){
     setGridSize(gridSize);
     setGridSizeLock(lock);
@@ -129,11 +133,26 @@ function GameArea(){
   function makeLoadSectionVisible(){
     setShowLoadScreen(prev=>!prev);
   }
+  const times = new Date();
+  times.setSeconds(times.getSeconds() + gameTime);
+  const {
+    seconds,
+    minutes,
+  } = useTimer({
+
+    onExpire: () => console.warn('onExpire called'),
+    expiryTimestamp: times
+  });
   useEffect(()=>{
 
-  },[resetGame])
+  },[resetGame,gameTime])
   return (
     <>
+      <div style={{textAlign: 'center'}}>
+      <div style={{fontSize: '25px'}}>
+        <span>{minutes}</span>:<span>{seconds}</span>
+        </div>
+      </div>
       <div className="App-grid">
         <Grid 
           gridSize={gridSize} 
@@ -158,7 +177,9 @@ function GameArea(){
           userKey={userKey}
           gridSize={gridSize}  
           setGridSize={setGridSize}  
-          gridSizeLock={gridSizeLock} 
+          gridSizeLock={gridSizeLock}
+          time={gameTime}
+          setTime={setGameTime}
         />
 
         <TurnIndicator

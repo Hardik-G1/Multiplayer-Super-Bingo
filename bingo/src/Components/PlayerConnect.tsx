@@ -2,6 +2,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import "./PlayerConnect.css";
 import { GridSize } from "../DataTypes";
 import GridSizeDropDown from "./GridSizeDropDown";
+import TimerToggle from "./TimerToggle";
 interface ConnectProps {
     userKey: string;
     handleSubmit: (event:React.FormEvent<HTMLFormElement>,key:string) => void;
@@ -10,8 +11,10 @@ interface ConnectProps {
     gridSize:GridSize;
     setGridSize: React.Dispatch<SetStateAction<GridSize>>;
     gridSizeLock:boolean;
+    time: number; 
+    setTime: React.Dispatch<SetStateAction<number>>; 
   }
-function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock}:ConnectProps){
+function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock,time,setTime}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
 
@@ -32,19 +35,22 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
     },[resetGame,isConnected]);
     return (
         <>{!isConnected &&
-        <div className="container">
+        <div className="containera">
             <button onClick={()=>handleClick(1)} className="button">
                 Setup a Game
             </button>
             <button onClick={()=>handleClick(2)} className="button">
-                Get Key
+                Show Key
             </button>
-            {isOrganiser && (
-                <div id="inputSection">
+            {isOrganiser && !gridSizeLock && (
+                <div id="inputSection" className="dropdown-container">
                     <GridSizeDropDown 
                     gridSize={gridSize}  
                     setGridSize={setGridSize}  
-                    gridSizeLock={gridSizeLock}
+                    />
+                <TimerToggle 
+                    time={time} 
+                    setTime={setTime}
                 />
                 <form onSubmit={(e)=>handleSubmitClick(e,secondKey)}>
                 <input  type="text"
