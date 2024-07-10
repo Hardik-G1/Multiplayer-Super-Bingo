@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import Peer, { DataConnection } from 'peerjs';
-import { GameData } from '../DataTypes';
 interface PeerConnectionProviderProps {
+  setOrganiser:()=>void;
   HandleConnections: (peerId: string) => void;
   handleGameData: (data: any) => void;
   SendGameSetupData: () => void;
@@ -9,6 +9,7 @@ interface PeerConnectionProviderProps {
   userKey:string;
 }
 export const usePeerConnection = ({
+  setOrganiser,
   handleGameData,
   HandleConnections,
   SendGameSetupData,
@@ -30,8 +31,6 @@ export const usePeerConnection = ({
         HandleConnections(conn.peer);
       }
       conn.on("data", (data) => {
-        let c=data as GameData;
-        console.log("Connection data"+c.id+c.content);
         handleGameData(data);
       });
       conn.on("open", () => {
@@ -39,6 +38,7 @@ export const usePeerConnection = ({
       });
       conn.on("error", handleConnectionError);
       conn.on("close", handleConnectionClose);
+      
     });
 }, []);
 
@@ -46,6 +46,7 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>, secondKey: string
   event.preventDefault();
   if (peerRef.current !== null) {
     if (connRef.current === null) {
+      setOrganiser();
       const conn = peerRef.current.connect(secondKey);
       connRef.current = conn;
       HandleConnections(secondKey);
@@ -55,8 +56,6 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>, secondKey: string
       SendGameSetupData();
     });
     connRef.current.on("data", (data) => {
-      let c=data as GameData;
-      console.log("Connection data"+c.id+c.content);
       handleGameData(data);
     });
     connRef.current.on("error", handleConnectionError);

@@ -2,8 +2,8 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { GridData, GridSize } from '../DataTypes';
 import GridPreview from './GridPreview'; 
 
-import "./SavedGridsViewer.css";
-import "./Grid.css";
+import "./css/SavedGridsViewer.css";
+import "./css/Grid.css";
 
 export interface SavedGridsViewerProps {
   showLoadScreen: boolean;
@@ -15,6 +15,7 @@ function SavedGridsViewer({ showLoadScreen, gridSize, setGridData }: SavedGridsV
   const [grids, setGrids] = useState<Array<{ name: string; data: GridData[][] }>>([]);
 
   useEffect(() => {
+    console.log("sad");
     refreshGrids();
   }, [gridSize]);
 

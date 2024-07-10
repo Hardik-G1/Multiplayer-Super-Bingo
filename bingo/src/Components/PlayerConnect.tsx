@@ -1,5 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
-import "./PlayerConnect.css";
+import "./css/PlayerConnect.css";
 import { GridSize } from "../DataTypes";
 import GridSizeDropDown from "./GridSizeDropDown";
 import TimerToggle from "./TimerToggle";

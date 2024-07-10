@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./ButtonArea.css";
+import "./css/ButtonArea.css";
 
 export interface ButtonProps {
   readySignal: () => void;

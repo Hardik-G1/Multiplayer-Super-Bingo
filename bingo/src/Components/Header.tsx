@@ -1,4 +1,4 @@
-import "./Header.css"
+import "./css/Header.css"
 function Header(){
     return(
         <header className="App-banner">BINGO!</header>

@@ -1,5 +1,5 @@
 import React, { SetStateAction, useState } from 'react';
-import './TimerToggle.css';
+import './css/TimerToggle.css';
 
 interface TimerProps {
   time: number;

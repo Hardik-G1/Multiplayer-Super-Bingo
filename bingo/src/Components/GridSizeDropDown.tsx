@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { GridSize, allowedSizes } from "../DataTypes";
-import "./GridSizeDropDown.css";
+import "./css/GridSizeDropDown.css";
 interface GridSizeDropDownProps {
     gridSize: GridSize;
     setGridSize: Dispatch<SetStateAction<GridSize>>;

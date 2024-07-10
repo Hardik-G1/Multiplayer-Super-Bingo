@@ -1,6 +1,6 @@
 import {  Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GridData, GridSize, wordsMapping } from "../DataTypes";
-import "./Grid.css";
+import "./css/Grid.css";
 import { getStraightLines } from "../Helper";
 import { WordWithStrikes } from "./WordWithStrikes";
 interface GridProps {
@@ -12,7 +12,7 @@ interface GridProps {
     setIsGridFull:Dispatch<SetStateAction<boolean>>;
     isGridFull:boolean;
     strikeNumber:(data:string)=>void;
-    GameFinished:(won:boolean)=>void;
+    GameFinished:(result:boolean,networkCall:boolean)=>void;
     resetGame:boolean;
     currentNumber:number;
     setCurrentNumber:Dispatch<SetStateAction<number>>;
@@ -23,23 +23,27 @@ function Grid({gridData,setGridData,isConnected,GameFinished,allReady,gameEnded,
     const [linesCount, setLinesCount] = useState(0);
     const word = wordsMapping[gridSize];
     useEffect(()=>{
+      console.log("sad");
         setGridData(Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData)));
         setCurrentNumber(1);
     },[gridSize])
     useEffect(()=>{
+      console.log("sad");
         checkIfGridIsFull();
         checkForLines();
     },[gridData]);
     useEffect(() => {
+      console.log("sad");
         checkIfWon();
       }, [linesCount]);
     useEffect(()=>{
+      console.log("sad");
         setCurrentNumber(1);
         setLinesCount(0);
     },[resetGame])
     function checkIfWon(){
         if (linesCount >= word.length){
-            GameFinished(true)
+            GameFinished(true,false)
         }
     }  
     function checkIfGridIsFull(){

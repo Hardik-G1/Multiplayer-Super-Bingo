@@ -11,7 +11,7 @@ export const wordsMapping: Record<number, string> = {
 };
 export interface GameSetup {
   gridSize: GridSize,
-  time: number
+  duration:number
 }
 export interface ConnectionsData {
   id: string,

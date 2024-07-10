@@ -2,7 +2,7 @@ import { useState,  } from 'react';
 import {  GameData, GridData, GridSize } from '../DataTypes';
 import { getRandomFillData, saveGridDataInLocal } from '../Helper';
 
-export const useGameStats = (gridSize: GridSize ,SendRequest:(requestData:GameData)=>void,yourTurn:boolean|null,setYourTurn:React.Dispatch<React.SetStateAction<boolean | null>>) => {
+export const useGameStats = (pauseTimer:()=>void,gridSize: GridSize ,SendRequest:(requestData:GameData)=>void,yourTurn:boolean|null,setYourTurn:React.Dispatch<React.SetStateAction<boolean | null>>) => {
   const [gridData, setGridData] = useState<GridData[][]>(Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData)));
   const [currentNumber, setCurrentNumber] = useState(1);
   const [isGridFull, setIsGridFull] = useState(false);
@@ -12,6 +12,9 @@ export const useGameStats = (gridSize: GridSize ,SendRequest:(requestData:GameDa
     SendRequest({ id: "ni", content: data } as GameData);
     SendRequest({ id: "tn", content: false } as GameData);
     setYourTurn(!yourTurn);
+    if(yourTurn){
+      pauseTimer();
+    }
   }
 
 

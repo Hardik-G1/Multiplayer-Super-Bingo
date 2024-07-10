@@ -2,13 +2,14 @@ import { useEffect, useState,  } from 'react';
 import {  GameData } from '../DataTypes';
 
 
-export const useGameConnnection = (userKey:string,SendRequest:(requestData:GameData)=>void) => {
+export const useGameConnnection = (isOrganiser:boolean,userKey:string,SendRequest:(requestData:GameData)=>void,SendRequestToOther:(requestData:GameData)=>void,startTimer:()=>void) => {
     const [connections, setConnections] = useState([{ id: userKey, ready: false }]);
     const [isConnected, setIsConnected] = useState(false);
     const [allReady, setAllReady] = useState(false);
     const [selfReady, setSelfReady] = useState(false);
     const [yourTurn, setYourTurn] = useState<boolean|null>(null);
     useEffect(() => {
+      console.log("sad");
         checkAllReady();
       }, [connections]);
       
@@ -20,7 +21,9 @@ export const useGameConnnection = (userKey:string,SendRequest:(requestData:GameD
       function checkAllReady(){
         if (connections.every(s => s.ready)) {
           setAllReady(true);
-          toss();
+          if (isOrganiser){
+            toss();
+          }
         }
       }
       function readySignal(){
@@ -30,8 +33,13 @@ export const useGameConnnection = (userKey:string,SendRequest:(requestData:GameD
       }
       function toss(){
         const rndNum = Math.random();
-        setYourTurn(rndNum >= 0.5);
-        SendRequest({ id: "tn", content: rndNum >= 0.5 })
+        let isYourTurn=rndNum >= 0.5;
+        console.log(rndNum);
+        setYourTurn(isYourTurn);
+        SendRequestToOther({ id: "tn", content: isYourTurn })
+        if(isYourTurn){
+          startTimer();
+        }
         // connRef.current?.send({ id: "tn", content: rndNum >= 0.5 });
       }
       function ResetPlayerConnectionStatus(){

@@ -1,18 +1,19 @@
-import { useCallback,  useEffect,  useState } from "react";
+import { useCallback,  useEffect,  useRef,  useState } from "react";
 import Grid from "./Grid";
-import "./GameArea.css";
-import { usePeerConnection } from "./PeerConnectionHook";
+import "./css/GameArea.css";
+import { usePeerConnection } from "../Hooks/PeerConnectionHook";
 import PlayerConnect from "./PlayerConnect";
 import ButtonArea from "./ButtonArea";
 import SavedGridsViewer from "./SavedGridsViewer";
 import { TurnIndicator } from "./TurnIndicator";
 import { WinnerIndicator } from "./WinnerIndicator";
-import { useGameStats } from "./GameStats";
-import { useGameConnnection } from "./GameConnection";
-import { useGameEndHandler } from "./GameEndHandler";
+import { useGameStats } from "../Hooks/GameStats";
+import { useGameConnnection } from "../Hooks/GameConnection";
+import { useGameEndHandler } from "../Hooks/GameEndHandler";
 import { GameData, GameSetup, GridSize } from "../DataTypes";
 import { v4 as uuidv4 } from 'uuid';
-  import { useTimer } from 'react-timer-hook';
+import CountdownTimer, { CountdownTimerHandle } from "./Timer";
+
 function GameArea(){
 
   const [userKey, _] = useState(uuidv4());
@@ -20,6 +21,34 @@ function GameArea(){
   const [gridSize,setGridSize] = useState<GridSize>(5);
   const [showLoadScreen,setShowLoadScreen]=useState(false);
   const [gameTime, setGameTime]=useState(0);
+  const [isOrganiser,setIsOrganiser]=useState(false);
+  const timerRef = useRef<CountdownTimerHandle>(null);
+  const handleComplete = () => {
+    console.log("Time's up!");
+    if(allReady){
+      GameFinished(false,false);
+    }
+  };
+
+  const startTimer = () => {
+    if (timerRef.current) {
+      timerRef.current.startTimer();
+    }
+  };
+
+  const pauseTimer = () => {
+    if (timerRef.current) {
+      timerRef.current.pauseTimer();
+    }
+  };
+
+  const resetTimer = (newTime: number) => {
+    if (timerRef.current) {
+      console.log(newTime)
+      timerRef.current.resetTimer(newTime);
+    }
+  };
+
   const handleGameData = useCallback((data: any) => {
     const gameData: GameData = data as GameData;
     switch (gameData.id) {
@@ -31,29 +60,33 @@ function GameArea(){
         break;
       case "tn":
         setYourTurn(!gameData.content);
+        startTimer();
         break;
       case "ni":
         updateGridForPlayerTwo(gameData.content as string);
         break;
       case "gr":
-        GameFinished(gameData.content as boolean);
+        GameFinished(gameData.content as boolean,true);
         break;
       case "rg":
         ResetGameProps();
+        console.log(gameTime);//why 0
+        resetTimer(gameTime);
         break;
       default:
         break;
     }
   }, []);
 
-
-  const { handleSubmit, connRef, connRefPlayer2,ResetPeerConnection,sendToPeer } = usePeerConnection({
+  const { handleSubmit, connRef, connRefPlayer2,ResetPeerConnection,sendToPeer } = usePeerConnection({ 
+    setOrganiser,
     userKey,
     handleGameData,
     HandleConnections,
     SendGameSetupData,
     leaveAndReset
   });
+
   const {
     yourTurn,
     setYourTurn,
@@ -66,7 +99,7 @@ function GameArea(){
     selfReady,
     DisconnectedFromPlayer,
     ResetPlayerConnectionStatus
-  }=useGameConnnection(userKey,SendRequest);
+  }=useGameConnnection(isOrganiser,userKey,SendRequest,SendRequestToOther,startTimer);
 
   const {    
     gridData,
@@ -82,7 +115,7 @@ function GameArea(){
     strikeNumber,
     updateGridForPlayerTwo,
     GamePropsReset
-  }=useGameStats(gridSize,SendRequest,yourTurn,setYourTurn);
+  }=useGameStats(pauseTimer,gridSize,SendRequest,yourTurn,setYourTurn);
 
 
   const {
@@ -94,6 +127,7 @@ function GameArea(){
     resetGame,
     leaveGame
   }=useGameEndHandler(SendRequest,ResetPeerConnection,DisconnectedFromPlayer,ResetPlayerConnectionStatus,GamePropsReset,sendResetSignal,HandleGridSize);
+
   function HandleConnections(key :string){
     setConnections((prevState) => [
       ...prevState,
@@ -104,6 +138,9 @@ function GameArea(){
   function leaveAndReset(){
     leaveGame()
     ResetGameProps()
+    resetTimer(0);
+    console.log("here i got called");
+    setGameTime(0);
   }
   function sendResetSignal(){
     if (connRef && connRef.current?.peer!==userKey){
@@ -112,18 +149,16 @@ function GameArea(){
       connRefPlayer2.current?.send({"id":"rg","content":null});
     }
   }
+function setOrganiser(){
+  setIsOrganiser(true);
+}
   function SendRequest(requestData: GameData){
       connRef.current?.send(requestData);
       connRefPlayer2.current?.send(requestData);
   }
 
-  function SendGameSetupData() {
-    sendToPeer({ id: "gs", content: {"gridSize":gridSize,"time":gameTime }})
-    HandleGridSize(gridSize, true);
-  }
-function HandleGameSetup(gamedata: GameSetup){
-  HandleGridSize(gamedata.gridSize, true);
-  setGameTime(gamedata.time);
+  function SendRequestToOther(requestData: GameData){
+    connRef.current?.send(requestData);
 }
   function HandleGridSize(gridSize:GridSize,lock:boolean){
     setGridSize(gridSize);
@@ -133,27 +168,33 @@ function HandleGameSetup(gamedata: GameSetup){
   function makeLoadSectionVisible(){
     setShowLoadScreen(prev=>!prev);
   }
-  const times = new Date();
-  times.setSeconds(times.getSeconds() + gameTime);
-  const {
-    seconds,
-    minutes,
-  } = useTimer({
 
-    onExpire: () => console.warn('onExpire called'),
-    expiryTimestamp: times
-  });
   useEffect(()=>{
-
-  },[resetGame,gameTime])
+    console.log("sad");
+  },[resetGame]
+)
+useEffect(()=>{
+  console.log("sad");
+},[isConnected]
+)
+  useEffect(()=>{
+    console.log(gameTime);
+  },[gameTime])
+  function SendGameSetupData() {
+    sendToPeer({ id: "gs", content: {"gridSize":gridSize,"duration":gameTime }})
+    HandleGridSize(gridSize, true);
+  }
+function HandleGameSetup(gamedata: GameSetup){
+  HandleGridSize(gamedata.gridSize, true);
+  setGameTime(()=>gamedata.duration);
+  resetTimer(gamedata.duration)
+}
   return (
     <>
-      <div style={{textAlign: 'center'}}>
-      <div style={{fontSize: '25px'}}>
-        <span>{minutes}</span>:<span>{seconds}</span>
-        </div>
-      </div>
       <div className="App-grid">
+      {isConnected && gameTime>0 &&
+        <CountdownTimer ref={timerRef} initialTime={gameTime} onComplete={handleComplete} />
+      }
         <Grid 
           gridSize={gridSize} 
           gridData={gridData} 
@@ -191,7 +232,7 @@ function HandleGameSetup(gamedata: GameSetup){
           won={won}
         />
       </div>
-      <ButtonArea  
+     {isConnected && <><ButtonArea  
         clearGrid={clearGrid} 
         makeLoadSectionVisible={makeLoadSectionVisible} 
         saveGrid={saveGrid} 
@@ -211,8 +252,9 @@ function HandleGameSetup(gamedata: GameSetup){
         setGridData={setGridData} 
         gridSize={gridSize} 
         showLoadScreen={showLoadScreen} 
-      />
+      /></>}
     </>
   );
 }
 export default GameArea;
+

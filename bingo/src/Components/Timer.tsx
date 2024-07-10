@@ -1,27 +1,59 @@
-// import { useTimer } from 'react-timer-hook';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// function Timer({ expiryTimestamp,autoStart }) {
-//   const {
-//     seconds,
-//     minutes,
-//     start,
-//     pause,
-//     resume,
-//   } = useTimer({ expiryTimestamp, autoStart,onExpire: () => console.warn('onExpire called') });
+interface CountdownTimerProps {
+  initialTime: number;
+  onComplete: () => void;
+}
 
-//   function onStart(){
-//     start();
-// }
-//   return (
-    
-//     <div style={{textAlign: 'center'}}>
-//       <div style={{fontSize: '25px'}}>
-//        <span>{minutes}</span>:<span>{seconds}</span>
-//       </div>
-//       <button onClick={onStart}>Start</button>
-//       <button onClick={pause}>Pause</button>
-//       <button onClick={resume}>Resume</button>
-//     </div>
-//   );
-// }
-// export default Timer;
+export interface CountdownTimerHandle {
+  startTimer: () => void;
+  pauseTimer: () => void;
+  resetTimer: (newTime: number) => void;
+}
+
+const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(({ initialTime, onComplete }, ref) => {
+  const [time, setTime] = useState(initialTime);
+  const [isActive, setIsActive] = useState(false);
+  const intervalRef = useRef<number | null>(null);
+  useEffect(()=>{},[initialTime]);
+  useEffect(() => {
+    if (isActive && time > 0) {
+      intervalRef.current = window.setInterval(() => {
+        setTime(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (time === 0) {
+      clearInterval(intervalRef.current!);
+      onComplete();
+    } else {
+      clearInterval(intervalRef.current!);
+    }
+    return () => clearInterval(intervalRef.current!);
+  }, [isActive, time, onComplete]);
+
+  useImperativeHandle(ref, () => ({
+    startTimer() {
+      setIsActive(true);
+    },
+    pauseTimer() {
+      setIsActive(false);
+    },
+    resetTimer(newTime: number) {
+      setIsActive(false);
+      setTime(newTime);
+    }
+  }));
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
+  return (
+    <div>
+      <div>{formatTime(time)}</div>
+    </div>
+  );
+});
+
+export default CountdownTimer;

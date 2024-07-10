@@ -5,14 +5,19 @@ export const useGameEndHandler = (SendRequest:(requestData:GameData)=>void,Reset
     const [won, setWon] = useState<boolean | null>(null);
     const [gameEnded, setGameEnded] = useState(false);
     const [resetGame, setResetGame] = useState(false);
-    function GameFinished(won:boolean){
+    function GameFinished(result:boolean,networkCall : boolean){
         setGameEnded(true);
-        if (won===false){
+        if (result===false){
             setWon(false);
-            return;
+        }else{
+          setWon(true);
         }
-        setWon(true);
-        SendRequest({ id: "gr", content: false } as GameData);
+        if (!networkCall){
+          SendGameResult(result)
+        }
+      }
+      function SendGameResult(result:boolean){
+        SendRequest({ id: "gr", content: !result } as GameData);
       }
       function resetAndSendSignal(){
         sendResetSignal();
