@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GameData, GridSize } from "../DataTypes";
 
-export const useGameEndHandler = (SendRequest:(requestData:GameData)=>void,ResetPeerConnection:()=>void,DisconnectedFromPlayer:()=>void,ResetPlayerConnectionStatus:()=>void,GamePropsReset:()=>void,sendResetSignal:()=>void,HandleGridSize:(gridSize:GridSize,lock:boolean)=>void)=>{
+export const useGameEndHandler = (ResetGameTimer: (gameTimer:number)=>void,gameTime:number,SendRequest:(requestData:GameData)=>void,ResetPeerConnection:()=>void,DisconnectedFromPlayer:()=>void,ResetPlayerConnectionStatus:()=>void,GamePropsReset:()=>void,HandleGridSize:(gridSize:GridSize,lock:boolean)=>void)=>{
     const [won, setWon] = useState<boolean | null>(null);
     const [gameEnded, setGameEnded] = useState(false);
     const [resetGame, setResetGame] = useState(false);
@@ -20,8 +20,9 @@ export const useGameEndHandler = (SendRequest:(requestData:GameData)=>void,Reset
         SendRequest({ id: "gr", content: !result } as GameData);
       }
       function resetAndSendSignal(){
-        sendResetSignal();
+        SendRequest({"id":"rg","content":gameTime} as GameData);
         ResetGameProps()
+        ResetGameTimer(gameTime);
       }
       function ResetGameEndProps(){
         setResetGame((prev: any)=>!prev);

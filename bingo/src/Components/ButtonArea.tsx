@@ -10,7 +10,7 @@ export interface ButtonProps {
   randomFill: () => void;
   gameEnded: boolean;
   leaveGame: () => void;
-  resetAndSignal: () => void;
+  resetAndSendSignal: () => void;
   undo: () => void;
   currentNumber: number;
   saveGrid: (name: string) => void;
@@ -28,7 +28,7 @@ function ButtonArea({
   allReady,
   randomFill,
   gameEnded,
-  resetAndSignal,
+  resetAndSendSignal,
   undo,
   currentNumber,
   saveGrid,
@@ -112,7 +112,7 @@ function ButtonArea({
   };
 
   const renderResetButton = () => {
-    return gameEnded && <button onClick={resetAndSignal}>Reset</button>;
+    return gameEnded && <button onClick={resetAndSendSignal}>Reset</button>;
   };
 
   const renderLeaveGameButton = () => {

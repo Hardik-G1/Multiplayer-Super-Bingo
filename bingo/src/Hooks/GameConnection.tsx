@@ -9,7 +9,6 @@ export const useGameConnnection = (isOrganiser:boolean,userKey:string,SendReques
     const [selfReady, setSelfReady] = useState(false);
     const [yourTurn, setYourTurn] = useState<boolean|null>(null);
     useEffect(() => {
-      console.log("sad");
         checkAllReady();
       }, [connections]);
       
@@ -40,7 +39,6 @@ export const useGameConnnection = (isOrganiser:boolean,userKey:string,SendReques
         if(isYourTurn){
           startTimer();
         }
-        // connRef.current?.send({ id: "tn", content: rndNum >= 0.5 });
       }
       function ResetPlayerConnectionStatus(){
         setAllReady(false);

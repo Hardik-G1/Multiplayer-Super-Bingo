@@ -28,7 +28,7 @@ const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(({ 
       clearInterval(intervalRef.current!);
     }
     return () => clearInterval(intervalRef.current!);
-  }, [isActive, time, onComplete]);
+  }, [isActive, time]);
 
   useImperativeHandle(ref, () => ({
     startTimer() {

@@ -59,8 +59,7 @@ function GameArea(){
         HandlePlayersReady(gameData.content.id)
         break;
       case "tn":
-        setYourTurn(!gameData.content);
-        startTimer();
+        HandleTurn(gameData)
         break;
       case "ni":
         updateGridForPlayerTwo(gameData.content as string);
@@ -70,8 +69,7 @@ function GameArea(){
         break;
       case "rg":
         ResetGameProps();
-        console.log(gameTime);//why 0
-        resetTimer(gameTime);
+        ResetGameTimer(gameData.content as number);
         break;
       default:
         break;
@@ -126,7 +124,7 @@ function GameArea(){
     gameEnded,
     resetGame,
     leaveGame
-  }=useGameEndHandler(SendRequest,ResetPeerConnection,DisconnectedFromPlayer,ResetPlayerConnectionStatus,GamePropsReset,sendResetSignal,HandleGridSize);
+  }=useGameEndHandler(ResetGameTimer,gameTime,SendRequest,ResetPeerConnection,DisconnectedFromPlayer,ResetPlayerConnectionStatus,GamePropsReset,HandleGridSize);
 
   function HandleConnections(key :string){
     setConnections((prevState) => [
@@ -139,15 +137,18 @@ function GameArea(){
     leaveGame()
     ResetGameProps()
     resetTimer(0);
-    console.log("here i got called");
     setGameTime(0);
   }
-  function sendResetSignal(){
-    if (connRef && connRef.current?.peer!==userKey){
-      connRef.current?.send({"id":"rg","content":null});
-    } else if (connRefPlayer2){
-      connRefPlayer2.current?.send({"id":"rg","content":null});
-    }
+function HandleTurn(gameData:GameData){
+  if (!gameData.content){
+    setYourTurn(true);
+    startTimer();
+  }else{
+    setYourTurn(false);
+  }
+}
+  function ResetGameTimer(gameTimer: number){
+    resetTimer(gameTimer);
   }
 function setOrganiser(){
   setIsOrganiser(true);
@@ -186,7 +187,7 @@ useEffect(()=>{
   }
 function HandleGameSetup(gamedata: GameSetup){
   HandleGridSize(gamedata.gridSize, true);
-  setGameTime(()=>gamedata.duration);
+  setGameTime(gamedata.duration);
   resetTimer(gamedata.duration)
 }
   return (
@@ -238,7 +239,7 @@ function HandleGameSetup(gamedata: GameSetup){
         saveGrid={saveGrid} 
         undo={undo} 
         currentNumber={currentNumber} 
-        resetAndSignal={resetAndSendSignal} 
+        resetAndSendSignal={resetAndSendSignal} 
         leaveGame={leaveAndReset} 
         randomFill={randomFill} 
         gameEnded={gameEnded} 
