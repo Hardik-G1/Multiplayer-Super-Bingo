@@ -53,7 +53,7 @@ function GameArea(){
   function showToast(message:string){
     toast(message, {
       position: "top-center",
-      autoClose: 3000,
+      autoClose: 2000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -213,7 +213,7 @@ function GameArea(){
       <div className="App-grid">
         <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={2000}
         limit={3}
         hideProgressBar
         newestOnTop={false}
