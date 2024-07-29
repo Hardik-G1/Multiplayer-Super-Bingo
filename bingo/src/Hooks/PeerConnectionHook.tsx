@@ -45,9 +45,9 @@ useEffect(() => {
         console.log("Connection opened with peer:", conn.peer);
       });
 
-      conn.on("error", (err) => {
-        console.error("Connection error with peer:", conn.peer, err);
-        handleConnectionError(err);
+      conn.on("error", () => {
+        console.error("Connection error with peer:", conn.peer);
+        handleConnectionError();
       });
 
       conn.on("close", () => {
@@ -83,9 +83,9 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>, secondKey: string
         handleGameData(data);
       });
 
-      conn.on("error", (err) => {
-        console.error("Connection error with second key:", secondKey, err);
-        handleConnectionError(err);
+      conn.on("error", () => {
+        console.error("Connection error with second key:", secondKey);
+        handleConnectionError();
       });
 
       conn.on("close", () => {
@@ -106,18 +106,19 @@ function sendToPeer(data: any) {
     console.error('Connection not established.');
   }
 }
-
-
-function handleConnectionError(error: any){
-  console.error("Connection error:", error);
+function cleanPeer(){
+  connRef.current = null;
+  connRefPlayer2.current = null;
+}
+function handleConnectionError(){
   showToast("Connection Failed");
   gameReset();
+  cleanPeer();
 };
 const handleConnectionClose = () => {
   showToast("Disconnected from the Game");
   gameReset();
-  connRef.current = null;
-  connRefPlayer2.current = null;
+  cleanPeer();
 };
   function ResetPeerConnection(){
     connRef.current?.close();
