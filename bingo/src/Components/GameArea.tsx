@@ -79,8 +79,7 @@ function GameArea(){
         pauseTimer();
         break;
       case "reset-game":
-        resetGameProps();
-        ResetGameTimer(gameData.content as number);
+        restartGame(false);
         break;
       case "ws":
           showToast("Opponent striked "+ gameData.content as string);
@@ -150,8 +149,11 @@ function GameArea(){
     setIsGridFull(false);
     setCurrentNumber(1);
   }
-  function restartGame(){
-    SendRequest({"id":"reset-game","content":gameTime} as GameData);
+  function restartGame(sendRequest:boolean){
+    if (sendRequest){
+      SendRequest({"id":"reset-game","content":gameTime} as GameData);
+    }
+    showToast("Restarted the Game");
     resetGameProps();
     ResetGameTimer(gameTime);
   }

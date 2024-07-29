@@ -10,7 +10,7 @@ export interface ButtonProps {
   randomFill: () => void;
   gameEnded: boolean;
   gameReset: () => void;
-  restartGame: () => void;
+  restartGame: (sendRequest:boolean) => void;
   undo: () => void;
   currentNumber: number;
   saveGrid: (name: string) => void;
@@ -112,7 +112,7 @@ function ButtonArea({
   };
 
   const renderResetButton = () => {
-    return gameEnded && <button onClick={restartGame}>Restart Game</button>;
+    return gameEnded && <button onClick={()=>restartGame(true)}>Restart Game</button>;
   };
 
   const renderLeaveGameButton = () => {

@@ -114,13 +114,14 @@ function handleConnectionError(error: any){
   gameReset();
 };
 const handleConnectionClose = () => {
+  showToast("Disconnected from the Game");
   gameReset();
+  connRef.current = null;
+  connRefPlayer2.current = null;
 };
   function ResetPeerConnection(){
     connRef.current?.close();
     connRefPlayer2.current?.close();
-    connRef.current = null;
-    connRefPlayer2.current = null;
   }
   return {
     handleSubmit, connRef, connRefPlayer2 ,ResetPeerConnection,sendToPeer
