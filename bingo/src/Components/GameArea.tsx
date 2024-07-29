@@ -10,10 +10,12 @@ import { WinnerIndicator } from "./WinnerIndicator";
 import { useGameStats } from "../Hooks/GameStats";
 import { useGameConnnection } from "../Hooks/GameConnection";
 import { useGameEndHandler } from "../Hooks/GameEndHandler";
-import { GameData, GameSetup, GridSize } from "../DataTypes";
+import { GameData, GameSetup, GridData, GridSize } from "../DataTypes";
 import { v4 as uuidv4 } from 'uuid';
 import CountdownTimer, { CountdownTimerHandle } from "./Timer";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function GameArea(){
 
   const [userKey, _] = useState(uuidv4());
@@ -48,7 +50,15 @@ function GameArea(){
       timerRef.current.resetTimer(newTime);
     }
   };
-
+  function showToast(message:string){
+    toast(message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      });
+  } 
   const handleGameData = useCallback((data: any) => {
     const gameData: GameData = data as GameData;
     switch (gameData.id) {
@@ -66,11 +76,15 @@ function GameArea(){
         break;
       case "gr":
         GameFinished(gameData.content as boolean,true);
+        pauseTimer();
         break;
-      case "rg":
-        ResetGameProps();
+      case "reset-game":
+        resetGameProps();
         ResetGameTimer(gameData.content as number);
         break;
+      case "ws":
+          showToast("Opponent striked "+ gameData.content as string);
+          break;
       default:
         break;
     }
@@ -82,7 +96,8 @@ function GameArea(){
     handleGameData,
     HandleConnections,
     SendGameSetupData,
-    leaveAndReset
+    gameReset,
+    showToast
   });
 
   const {
@@ -95,7 +110,6 @@ function GameArea(){
     isConnected,
     allReady,
     selfReady,
-    DisconnectedFromPlayer,
     ResetPlayerConnectionStatus
   }=useGameConnnection(isOrganiser,userKey,SendRequest,SendRequestToOther,startTimer);
 
@@ -112,19 +126,15 @@ function GameArea(){
     setIsGridFull,
     strikeNumber,
     updateGridForPlayerTwo,
-    GamePropsReset
-  }=useGameStats(pauseTimer,gridSize,SendRequest,yourTurn,setYourTurn);
-
+  }=useGameStats(showToast,pauseTimer,gridSize,SendRequest,yourTurn,setYourTurn);
 
   const {
     won,
     GameFinished,
-    ResetGameProps,
-    resetAndSendSignal,
+    ResetGameEndProps,
     gameEnded,
     resetGame,
-    leaveGame
-  }=useGameEndHandler(ResetGameTimer,gameTime,SendRequest,ResetPeerConnection,DisconnectedFromPlayer,ResetPlayerConnectionStatus,GamePropsReset,HandleGridSize);
+  }=useGameEndHandler(showToast,SendRequest);
 
   function HandleConnections(key :string){
     setConnections((prevState) => [
@@ -133,34 +143,49 @@ function GameArea(){
     ]);
     setIsConnected(true);
   }
-  function leaveAndReset(){
-    leaveGame()
-    ResetGameProps()
+  function resetGameProps(){
+    ResetGameEndProps()
+    ResetPlayerConnectionStatus()
+    setGridData(Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData)));
+    setIsGridFull(false);
+    setCurrentNumber(1);
+  }
+  function restartGame(){
+    SendRequest({"id":"reset-game","content":gameTime} as GameData);
+    resetGameProps();
+    ResetGameTimer(gameTime);
+  }
+  function gameReset(){
+    HandleGridSize(5 as GridSize,false);
+    setIsConnected(false);
     resetTimer(0);
     setGameTime(0);
+    resetGameProps();
   }
-function HandleTurn(gameData:GameData){
-  if (!gameData.content){
-    setYourTurn(true);
-    startTimer();
-  }else{
-    setYourTurn(false);
+  function HandleTurn(gameData:GameData){
+    if (!gameData.content){
+      setYourTurn(true);
+      startTimer();
+    }else{
+      setYourTurn(false);
+    }
   }
-}
   function ResetGameTimer(gameTimer: number){
     resetTimer(gameTimer);
   }
-function setOrganiser(){
-  setIsOrganiser(true);
-}
+  function setOrganiser(){
+    setIsOrganiser(true);
+  }
   function SendRequest(requestData: GameData){
       connRef.current?.send(requestData);
       connRefPlayer2.current?.send(requestData);
   }
-
+  function SendWordStrikedFromOpponent(data:string){
+    SendRequest({ id: "ws", content: data});
+  }
   function SendRequestToOther(requestData: GameData){
     connRef.current?.send(requestData);
-}
+  }
   function HandleGridSize(gridSize:GridSize,lock:boolean){
     setGridSize(gridSize);
     setGridSizeLock(lock);
@@ -170,29 +195,28 @@ function setOrganiser(){
     setShowLoadScreen(prev=>!prev);
   }
 
-  useEffect(()=>{
-    console.log("sad");
-  },[resetGame]
-)
-useEffect(()=>{
-  console.log("sad");
-},[isConnected]
-)
-  useEffect(()=>{
-    console.log(gameTime);
-  },[gameTime])
+  useEffect(()=>{},[isConnected,resetGame,gameTime])
+
   function SendGameSetupData() {
     sendToPeer({ id: "gs", content: {"gridSize":gridSize,"duration":gameTime }})
     HandleGridSize(gridSize, true);
   }
-function HandleGameSetup(gamedata: GameSetup){
-  HandleGridSize(gamedata.gridSize, true);
-  setGameTime(gamedata.duration);
-  resetTimer(gamedata.duration)
-}
+  function HandleGameSetup(gamedata: GameSetup){
+    HandleGridSize(gamedata.gridSize, true);
+    setGameTime(gamedata.duration);
+    resetTimer(gamedata.duration)
+  }
   return (
     <>
       <div className="App-grid">
+        <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        limit={3}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        />
       {isConnected && gameTime>0 &&
         <CountdownTimer ref={timerRef} initialTime={gameTime} onComplete={handleComplete} />
       }
@@ -205,12 +229,13 @@ function HandleGameSetup(gamedata: GameSetup){
           currentNumber={currentNumber}
           setCurrentNumber={setCurrentNumber}
           isConnected={isConnected} 
-          allReady={allReady}
           gameEnded={gameEnded}
           strikeNumber={strikeNumber} 
           GameFinished={GameFinished} 
           yourTurn={yourTurn} 
           resetGame={resetGame} 
+          showToast={showToast}
+          SendWordStrikedFromOpponent={SendWordStrikedFromOpponent}
         />
         <PlayerConnect  
           isConnected={isConnected} 
@@ -222,6 +247,7 @@ function HandleGameSetup(gamedata: GameSetup){
           gridSizeLock={gridSizeLock}
           time={gameTime}
           setTime={setGameTime}
+          showToast={showToast}
         />
 
         <TurnIndicator
@@ -239,8 +265,8 @@ function HandleGameSetup(gamedata: GameSetup){
         saveGrid={saveGrid} 
         undo={undo} 
         currentNumber={currentNumber} 
-        resetAndSendSignal={resetAndSendSignal} 
-        leaveGame={leaveAndReset} 
+        restartGame={restartGame} 
+        gameReset={ResetPeerConnection} 
         randomFill={randomFill} 
         gameEnded={gameEnded} 
         isConnected={isConnected} 
@@ -253,6 +279,7 @@ function HandleGameSetup(gamedata: GameSetup){
         setGridData={setGridData} 
         gridSize={gridSize} 
         showLoadScreen={showLoadScreen} 
+        showToast={showToast}
       /></>}
     </>
   );

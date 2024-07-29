@@ -16,79 +16,93 @@ interface GridProps {
     resetGame:boolean;
     currentNumber:number;
     setCurrentNumber:Dispatch<SetStateAction<number>>;
-    allReady:boolean;
     gameEnded:boolean;
+    showToast:(message:string)=>void;
+    SendWordStrikedFromOpponent:(data:string)=>void;
   }
-function Grid({gridData,setGridData,isConnected,GameFinished,allReady,gameEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame}:GridProps){
+function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame,showToast,SendWordStrikedFromOpponent}:GridProps){
     const [linesCount, setLinesCount] = useState(0);
     const word = wordsMapping[gridSize];
+
     useEffect(()=>{
-      console.log("sad");
         setGridData(Array(gridSize).fill(null).map(() => Array(gridSize).fill({ number: '', struck: false } as GridData)));
         setCurrentNumber(1);
     },[gridSize])
+
     useEffect(()=>{
-      console.log("sad");
         checkIfGridIsFull();
         checkForLines();
     },[gridData]);
+
     useEffect(() => {
-      console.log("sad");
         checkIfWon();
       }, [linesCount]);
+
     useEffect(()=>{
-      console.log("sad");
         setCurrentNumber(1);
         setLinesCount(0);
     },[resetGame])
+
     function checkIfWon(){
-        if (linesCount >= word.length){
-            GameFinished(true,false)
-        }
+      if (linesCount >= word.length){
+          GameFinished(true,false)
+      }
     }  
     function checkIfGridIsFull(){
-        const isFull =gridData.every(row => row.every(cell => cell.number !== ''));
-        if (isFull){
-            setCurrentNumber((gridSize*gridSize)+1);
-        }
-        setIsGridFull(isFull);
-      };
+      const isFull =gridData.every(row => row.every(cell => cell.number !== ''));
+      if (isFull){
+          setCurrentNumber((gridSize*gridSize)+1);
+      }
+      setIsGridFull(isFull);
+    };
+
     function checkIsNotAlreadyStriked(rowIndex: number, colIndex: number){
-        return !gridData[rowIndex][colIndex].struck;
+      if (gridData[rowIndex][colIndex].struck){
+        showToast(gridData[rowIndex][colIndex] +" already striked");
+      }
+      return !gridData[rowIndex][colIndex].struck;
     }
+
     function checkForLines(){
-        setLinesCount(getStraightLines(gridData));
+      let calculatedLinesCount=getStraightLines(gridData)
+      if (calculatedLinesCount>linesCount){
+        showToast(word[calculatedLinesCount]+" striked");
+        SendWordStrikedFromOpponent(word[calculatedLinesCount]);
+        setLinesCount(calculatedLinesCount);
+      }
     }
+
     function checkReadyorEnded(){
-      return (!isConnected && !allReady && gameEnded);
+      return (!isConnected || gameEnded);
     }
-  
+
     function handleCellClick(rowIndex:number,colIndex:number){
-        //provide a message to the user on disabled actions
-        if(checkReadyorEnded()){
-            return;
-        }
-        else if(gridData[rowIndex][colIndex].number === ''){
-            ManualCellFill(rowIndex,colIndex);
-            checkIfGridIsFull();
-        }else if(isGridFull && yourTurn && checkIsNotAlreadyStriked(rowIndex,colIndex)){
-            StrikeCell(rowIndex,colIndex);
-        }
+      //provide a message to the user on disabled actions
+      if(checkReadyorEnded()){
+        showToast("Game not in session.");
+        return;
+      }
+      else if(gridData[rowIndex][colIndex].number === ''){
+          ManualCellFill(rowIndex,colIndex);
+          checkIfGridIsFull();
+      }else if(isGridFull && yourTurn && checkIsNotAlreadyStriked(rowIndex,colIndex)){
+          StrikeCell(rowIndex,colIndex);
+      }
     }
     function ManualCellFill(rowIndex:number,colIndex:number){
-        const newGridData = gridData.map((row, rIdx) =>
-            row.map((cell, cIdx) => ((rIdx === rowIndex && cIdx === colIndex) ? { number: currentNumber.toString(), struck: false } : cell))
-        );
-        setGridData(newGridData);
-        setCurrentNumber(currentNumber + 1);
+      const newGridData = gridData.map((row, rIdx) =>
+          row.map((cell, cIdx) => ((rIdx === rowIndex && cIdx === colIndex) ? { number: currentNumber.toString(), struck: false } : cell))
+      );
+      setGridData(newGridData);
+      setCurrentNumber(currentNumber + 1);
     }
     function StrikeCell(rowIndex:number,colIndex:number){
-        const newStruckThrough = gridData.map((row, rIdx) =>
-            row.map((cell, cIdx) => ((rIdx === rowIndex && cIdx === colIndex && !cell.struck) ? { ...cell, struck: true } : cell))
-          );
-          setGridData(newStruckThrough);
-          strikeNumber(gridData[rowIndex][colIndex].number);
-          checkForLines();
+      const newStruckThrough = gridData.map((row, rIdx) =>
+          row.map((cell, cIdx) => ((rIdx === rowIndex && cIdx === colIndex && !cell.struck) ? { ...cell, struck: true } : cell))
+        );
+      setGridData(newStruckThrough);
+      strikeNumber(gridData[rowIndex][colIndex].number);
+      checkForLines();
     }
     return(<>
      {isConnected && (

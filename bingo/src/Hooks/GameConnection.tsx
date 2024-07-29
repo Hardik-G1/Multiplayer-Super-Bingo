@@ -47,9 +47,7 @@ export const useGameConnnection = (isOrganiser:boolean,userKey:string,SendReques
             return { ...item, ready:false};
           }));
       }
-      function DisconnectedFromPlayer(){
-        setIsConnected(false);
-      }
+
   return {
     setConnections,
     readySignal,
@@ -60,7 +58,6 @@ export const useGameConnnection = (isOrganiser:boolean,userKey:string,SendReques
     selfReady,
     yourTurn,
     setYourTurn,
-    DisconnectedFromPlayer,
     ResetPlayerConnectionStatus
   };
 };

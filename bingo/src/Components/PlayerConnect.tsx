@@ -13,34 +13,47 @@ interface ConnectProps {
     gridSizeLock:boolean;
     time: number; 
     setTime: React.Dispatch<SetStateAction<number>>; 
+    showToast:(message:string)=>void;
   }
-function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock,time,setTime}:ConnectProps){
+function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock,time,setTime,showToast}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
 
-    function handleClick(playerType:number){
-        if (playerType==1){
+    function handleOrganiser(wantsOrganiser:boolean){
+        if (wantsOrganiser){
             setIsOrganiser(true);
-        }else{
-            setIsOrganiser(false);
+            return;
         }
+        setIsOrganiser(false);
     }
     function handleSubmitClick(e: React.FormEvent<HTMLFormElement>,secondKey:string){
+        e.preventDefault();
+        if (!(secondKey && secondKey.trim())){
+            showToast("Please paste a player Key");
+            return;
+        }
         handleSubmit(e,secondKey.trim())
         setIsOrganiser(null);
         setSecondKey("");
     }
+    
     useEffect(()=>{
         setIsOrganiser(null);
     },[resetGame,isConnected]);
     return (
-        <>{!isConnected &&
+        <>
+        {!isConnected &&
         <div className="containera">
-            <button onClick={()=>handleClick(1)} className="button">
+            <button onClick={()=>handleOrganiser(true)} className="button">
                 Setup a Game
             </button>
-            <button onClick={()=>handleClick(2)} className="button">
+            <button onClick={()=>handleOrganiser(false)} className="button">
                 Show Key
+            </button>
+            <button className="button"
+            onClick={() =>  {navigator.clipboard.writeText(userKey);showToast("Key copied to clipboard.")}}
+            >
+            Copy Key
             </button>
             {isOrganiser && !gridSizeLock && (
                 <div id="inputSection" className="dropdown-container">
@@ -61,7 +74,7 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
                 </form>
                 </div>
             )}{isOrganiser===false &&(
-                <div id="textSection">
+                <div id="textSection">   
                 <p>This is your key {userKey}</p>
                 </div>
             )}

@@ -9,8 +9,8 @@ export interface ButtonProps {
   isConnected: boolean;
   randomFill: () => void;
   gameEnded: boolean;
-  leaveGame: () => void;
-  resetAndSendSignal: () => void;
+  gameReset: () => void;
+  restartGame: () => void;
   undo: () => void;
   currentNumber: number;
   saveGrid: (name: string) => void;
@@ -21,14 +21,14 @@ export interface ButtonProps {
 function ButtonArea({
   clearGrid,
   readySignal,
-  leaveGame,
+  gameReset,
   isGridFull,
   isConnected,
   selfReady,
   allReady,
   randomFill,
   gameEnded,
-  resetAndSendSignal,
+  restartGame,
   undo,
   currentNumber,
   saveGrid,
@@ -112,11 +112,11 @@ function ButtonArea({
   };
 
   const renderResetButton = () => {
-    return gameEnded && <button onClick={resetAndSendSignal}>Reset</button>;
+    return gameEnded && <button onClick={restartGame}>Restart Game</button>;
   };
 
   const renderLeaveGameButton = () => {
-    return isConnected && <button onClick={leaveGame}>Leave Game</button>;
+    return isConnected && <button onClick={gameReset}>Leave Game</button>;
   };
 
   return (

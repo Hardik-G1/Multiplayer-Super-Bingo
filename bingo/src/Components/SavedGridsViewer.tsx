@@ -9,13 +9,13 @@ export interface SavedGridsViewerProps {
   showLoadScreen: boolean;
   gridSize: GridSize;
   setGridData: Dispatch<SetStateAction<GridData[][]>>;
+  showToast:(message:string)=>void;
 }
 
-function SavedGridsViewer({ showLoadScreen, gridSize, setGridData }: SavedGridsViewerProps) {
+function SavedGridsViewer({ showLoadScreen, gridSize, setGridData,showToast }: SavedGridsViewerProps) {
   const [grids, setGrids] = useState<Array<{ name: string; data: GridData[][] }>>([]);
 
   useEffect(() => {
-    console.log("sad");
     refreshGrids();
   }, [gridSize]);
 
@@ -32,10 +32,12 @@ function SavedGridsViewer({ showLoadScreen, gridSize, setGridData }: SavedGridsV
     const updatedGrids = grids.filter((_, i) => i !== index);
     localStorage.setItem(gridSize.toString(), JSON.stringify(updatedGrids));
     setGrids(updatedGrids);
+    showToast("Successfully Deleted Saved Grid.");
   };
 
   const loadSavedGrid = (index: number) => {
     setGridData(grids[index].data);
+    showToast("Successfully Loaded Saved Grid.");
   };
 
   return (
