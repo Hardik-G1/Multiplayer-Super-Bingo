@@ -58,7 +58,7 @@ function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,
 
     function checkIsNotAlreadyStriked(rowIndex: number, colIndex: number){
       if (gridData[rowIndex][colIndex].struck){
-        showToast(gridData[rowIndex][colIndex] +" already striked");
+        showToast(gridData[rowIndex][colIndex].number +" already striked");
       }
       return !gridData[rowIndex][colIndex].struck;
     }
@@ -66,8 +66,8 @@ function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,
     function checkForLines(){
       let calculatedLinesCount=getStraightLines(gridData)
       if (calculatedLinesCount>linesCount){
-        showToast(word[calculatedLinesCount]+" striked");
-        SendWordStrikedFromOpponent(word[calculatedLinesCount]);
+        showToast(word[calculatedLinesCount-1]+" striked");
+        SendWordStrikedFromOpponent(word[calculatedLinesCount-1]);
         setLinesCount(calculatedLinesCount);
       }
     }
@@ -85,9 +85,15 @@ function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,
       else if(gridData[rowIndex][colIndex].number === ''){
           ManualCellFill(rowIndex,colIndex);
           checkIfGridIsFull();
-      }else if(isGridFull && yourTurn && checkIsNotAlreadyStriked(rowIndex,colIndex)){
+      }else if(isGridFull && isYourTurn() && checkIsNotAlreadyStriked(rowIndex,colIndex)){
           StrikeCell(rowIndex,colIndex);
       }
+    }
+    function isYourTurn(){
+      if (!yourTurn){
+        showToast("It is not your turn");
+      }
+      return yourTurn;
     }
     function ManualCellFill(rowIndex:number,colIndex:number){
       const newGridData = gridData.map((row, rIdx) =>
