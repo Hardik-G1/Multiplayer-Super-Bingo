@@ -10,6 +10,7 @@
 - [ ] Saved Grids can be loaded even when the game is started.
 - [ ] Game starts with the timer mode enabled but time not selected. 
 - [ ] Buttons should occupy the same height and width.
+- [ ] When clicked on show key change to hide key 
 
 
 # React + TypeScript + Vite
@@ -44,9 +45,9 @@ export default {
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
 ## Current Design
-![alt text](1.png "Title")
-![alt text](2.png "Options")
-![alt text](3.png "Grid")
-![alt text](4.png "Load saved grids")
-![alt text](5.png "Game in session")
+![alt text](images/1.png "Title")
+![alt text](images/2.png "Options")
+![alt text](images/3.png "Grid")
+![alt text](images/4.png "Load saved grids")
+![alt text](images/5.png "Game in session")
 

@@ -1,0 +1,49 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+:root {
+  /* Dark theme with greenish/yellowish accents */
+  --background-color: #1a1d24;
+  --card-bg: #2a2f3a;
+  --primary-color: #a3be8c; /* Green accent */
+  --primary-hover: #b9d0a5;
+  --secondary-color: #2e3440;
+  --secondary-hover: #3b4252;
+  --text-color: #ffffff;
+  --text-muted: #a0a8b7;
+  --blue-btn: #88c0d0; /* Teal accent */
+  --blue-btn-hover: #8fbcbb;
+  --grid-bg: #f0f0f4; /* Light gray for grid background */
+  --cell-bg: #ffffff;
+  --cell-selected: #e6f7ff;
+  --cell-border: #dcdcdc;
+  --border-radius: 8px;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+}
+/* Header */
+.header {
+  text-align: center;
+  padding: 1.5rem 0;
+  background-color:#1a1d24;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem 0;
+  background-color:#1a1d24;
+  color:#a0a8b7;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

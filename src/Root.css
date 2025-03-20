@@ -1,3 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+}
+
+:root {
+  /* Dark theme with greenish/yellowish accents */
+  --background-color: #1a1d24;
+  --card-bg: #2a2f3a;
+  --primary-color: #a3be8c; /* Green accent */
+  --primary-hover: #b9d0a5;
+  --secondary-color: #2e3440;
+  --secondary-hover: #3b4252;
+  --text-color: #ffffff;
+  --text-muted: #a0a8b7;
+  --blue-btn: #88c0d0; /* Teal accent */
+  --blue-btn-hover: #8fbcbb;
+  --grid-bg: #f0f0f4; /* Light gray for grid background */
+  --cell-bg: #ffffff;
+  --cell-selected: #e6f7ff;
+  --cell-border: #dcdcdc;
+  --border-radius: 8px;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+/* 
 .App {
     text-align: center;
     display: flex;
@@ -18,6 +62,6 @@
       flex: 2;
       flex-direction: column;
     }
-  }
+  } */
  
   

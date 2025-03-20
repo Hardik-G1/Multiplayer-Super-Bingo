@@ -1,8 +1,11 @@
+"use client"
+
 import { SetStateAction, useEffect, useState } from "react";
 import "./css/PlayerConnect.css";
 import { GridSize } from "../DataTypes";
 import GridSizeDropDown from "./GridSizeDropDown";
 import TimerToggle from "./TimerToggle";
+import GameSetup from "./GameSetup";
 interface ConnectProps {
     userKey: string;
     handleSubmit: (event:React.FormEvent<HTMLFormElement>,key:string) => void;
@@ -15,10 +18,13 @@ interface ConnectProps {
     setTime: React.Dispatch<SetStateAction<number>>; 
     showToast:(message:string)=>void;
   }
+  
 function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock,time,setTime,showToast}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
-
+    const [showSetup, setShowSetup] = useState(false)
+    const [isTimeMatched, setIsTimeMatched] = useState(false);
+    
     function handleOrganiser(wantsOrganiser:boolean){
         if (wantsOrganiser){
             setIsOrganiser(true);
@@ -26,13 +32,12 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
         }
         setIsOrganiser(false);
     }
-    function handleSubmitClick(e: React.FormEvent<HTMLFormElement>,secondKey:string){
-        e.preventDefault();
+    function handleSubmitClick(secondKey:string){
         if (!(secondKey && secondKey.trim())){
             showToast("Please paste a player Key");
             return;
         }
-        handleSubmit(e,secondKey.trim())
+        handleSubmit(secondKey.trim())
         setIsOrganiser(null);
         setSecondKey("");
     }
@@ -42,18 +47,36 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
     },[resetGame,isConnected]);
     return (
         <>
+    <div className="main-menu">
+      <button className="btn primary-btn" onClick={()=>setShowSetup(true)}>
+        <span className="icon">⊞</span> Setup a Game
+      </button>
+      <button onClick={()=>handleOrganiser(false)} className="btn secondary-btn">
+        <span className="icon">🔑</span> Show Key
+      </button>
+      <button  onClick={() =>  {navigator.clipboard.writeText(userKey);showToast("Key copied to clipboard.")}} className="btn secondary-btn">
+        <span className="icon">📋</span> Copy Key
+      </button>
+    </div>
+    {showSetup && (
+        <GameSetup
+          gridSize={gridSize}
+          setGridSize={setGridSize}
+          gameKey={secondKey}
+          setGameKey={setSecondKey}
+          timedMatch={isTimeMatched}
+          setTimedMatch={setIsTimeMatched}
+          setSelectedTime={setTime}
+          selectedTime={time}
+          onStartGame={()=>handleSubmitClick(secondKey)}
+          onClose={() => setShowSetup(false)}
+        />
+      )}
+
         {!isConnected &&
         <div className="containera">
             <button onClick={()=>handleOrganiser(true)} className="button">
                 Setup a Game
-            </button>
-            <button onClick={()=>handleOrganiser(false)} className="button">
-                Show Key
-            </button>
-            <button className="button"
-            onClick={() =>  {navigator.clipboard.writeText(userKey);showToast("Key copied to clipboard.")}}
-            >
-            Copy Key
             </button>
             {isOrganiser && !gridSizeLock && (
                 <div id="inputSection" className="dropdown-container">
@@ -82,4 +105,5 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
         </>
     )
 }
+
 export default PlayerConnect;

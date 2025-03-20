@@ -1,15 +1,15 @@
-import Footer from './Components/Footer';
 import GameArea from './Components/GameArea';
-import Header from './Components/Header';
 import './Root.css';
+import Layout from "./Components/Layout"
 function Root() {
   return (
     <div className="App">
-      <Header/>
-      <div className="App-body">
+      <Layout
+      title={"Super Bingo"}
+      footer={"© 2025 Super Bingo. All rights reserved."}
+    >
         <GameArea/>
-      </div>
-        <Footer/>
+      </Layout>
     </div>
   );
 }
