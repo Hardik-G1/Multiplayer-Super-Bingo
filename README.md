@@ -1,3 +1,17 @@
+
+## To-Dos
+
+- [ ] **Design Components**: Design the components. 
+- [ ] **Deploy**: Deploy on the domain.
+- [ ] **Create a Readme**: Description of the functionalities.
+
+## Bugs
+
+- [ ] Saved Grids can be loaded even when the game is started.
+- [ ] Game starts with the timer mode enabled but time not selected. 
+- [ ] Buttons should occupy the same height and width.
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -28,3 +42,11 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Current Design
+![alt text](1.png "Title")
+![alt text](2.png "Options")
+![alt text](3.png "Grid")
+![alt text](4.png "Load saved grids")
+![alt text](5.png "Game in session")
+
