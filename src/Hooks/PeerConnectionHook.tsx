@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Peer, { DataConnection } from 'peerjs';
 interface PeerConnectionProviderProps {
   setOrganiser:()=>void;
@@ -58,8 +58,7 @@ useEffect(() => {
   });
 }, []);
 
-function handleSubmit(event: React.FormEvent<HTMLFormElement>, secondKey: string) {
-  event.preventDefault();
+function handleSubmit(secondKey: string) {
 
   if (secondKey === userKey) {
     showToast("Please put someone else's key!");

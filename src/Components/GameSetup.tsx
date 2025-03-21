@@ -40,12 +40,13 @@ export default function GameSetup({
         <div className="modal-content">
           <div className="form-group">
             <label>Grid Size</label>
-            <select className="select-input" value={gridSize} onChange={(e) => setGridSize(e.target.value)}>
-              <option value="3-3">3×3</option>
-              <option value="4-4">4×4</option>
-              <option value="5-5">5×5</option>
-              <option value="5-10">5×10</option>
-              <option value="10-10">10×10</option>
+            <select className="select-input" value={gridSize} onChange={(e) => setGridSize(Number(e.target.value) as GridSize)}>
+              <option value="5">5×5</option>
+              <option value="6">6×6</option>
+              <option value="7">7×7</option>
+              <option value="8">8×8</option>
+              <option value="9">9×9</option>
+              <option value="10">10x10</option>
             </select>
           </div>
 
@@ -66,18 +67,23 @@ export default function GameSetup({
               <div className="toggle-slider"></div>
             </div>
           </div>
-
+        {timedMatch && 
           <div className="time-options">
-            {["5 min", "10 min", "15 min", "30 min"].map((time) => (
+            {[
+              { display: "5 min", value: 300 },
+              { display: "10 min", value: 600 },
+              { display: "15 min", value: 900 },
+              { display: "30 min", value: 1800 }
+            ].map((timeOption) => (
               <button
-                key={time}
-                className={`time-btn ${selectedTime === time ? "active" : ""}`}
-                onClick={() => setSelectedTime(time)}
+          key={timeOption.display}
+          className={`time-btn ${selectedTime === timeOption.value ? "active" : ""}`}
+          onClick={() => setSelectedTime(timeOption.value)}
               >
-                {time}
+          {timeOption.display}
               </button>
             ))}
-          </div>
+          </div>}
 
           <button className="btn primary-btn full-width" onClick={onStartGame}>
             Start Game
