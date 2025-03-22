@@ -19,7 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function GameArea(){
 
   const [userKey, _] = useState(uuidv4());
-  const [gridSizeLock, setGridSizeLock] = useState(false);
+  // const [gridSizeLock, setGridSizeLock] = useState(false);
   const [gridSize,setGridSize] = useState<GridSize>(5);
   const [showLoadScreen,setShowLoadScreen]=useState(false);
   const [gameTime, setGameTime]=useState(0);
@@ -158,7 +158,7 @@ function GameArea(){
     ResetGameTimer(gameTime);
   }
   function gameReset(){
-    HandleGridSize(5 as GridSize,false);
+    HandleGridSize(5 as GridSize);
     setIsConnected(false);
     resetTimer(0);
     setGameTime(0);
@@ -188,9 +188,9 @@ function GameArea(){
   function SendRequestToOther(requestData: GameData){
     connRef.current?.send(requestData);
   }
-  function HandleGridSize(gridSize:GridSize,lock:boolean){
+  function HandleGridSize(gridSize:GridSize){
     setGridSize(gridSize);
-    setGridSizeLock(lock);
+    // setGridSizeLock(lock);,lock:boolean
   }
 
   function makeLoadSectionVisible(){
@@ -201,10 +201,10 @@ function GameArea(){
 
   function SendGameSetupData() {
     sendToPeer({ id: "gs", content: {"gridSize":gridSize,"duration":gameTime }})
-    HandleGridSize(gridSize, true);
+    HandleGridSize(gridSize);
   }
   function HandleGameSetup(gamedata: GameSetup){
-    HandleGridSize(gamedata.gridSize, true);
+    HandleGridSize(gamedata.gridSize);
     setGameTime(gamedata.duration);
     resetTimer(gamedata.duration)
   }
@@ -246,7 +246,6 @@ function GameArea(){
           userKey={userKey}
           gridSize={gridSize}  
           setGridSize={setGridSize}  
-          gridSizeLock={gridSizeLock}
           time={gameTime}
           setTime={setGameTime}
           showToast={showToast}

@@ -3,8 +3,6 @@
 import { SetStateAction, useEffect, useState } from "react";
 import "./css/PlayerConnect.css";
 import { GridSize } from "../DataTypes";
-import GridSizeDropDown from "./GridSizeDropDown";
-import TimerToggle from "./TimerToggle";
 import GameSetup from "./GameSetup";
 interface ConnectProps {
     userKey: string;
@@ -13,13 +11,12 @@ interface ConnectProps {
     isConnected: boolean;
     gridSize:GridSize;
     setGridSize: React.Dispatch<SetStateAction<GridSize>>;
-    gridSizeLock:boolean;
     time: number; 
     setTime: React.Dispatch<SetStateAction<number>>; 
     showToast:(message:string)=>void;
   }
   
-function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,gridSizeLock,time,setTime,showToast}:ConnectProps){
+function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,time,setTime,showToast}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
     const [showSetup, setShowSetup] = useState(false)
@@ -27,7 +24,6 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
     
 
     const handleStartGame = (secondKey:string) => {
-        setShowSetup(false)
         handleSubmitClick(secondKey);
       }
     function handleSubmitClick(secondKey:string){
@@ -35,9 +31,14 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
             showToast("Please paste a player Key");
             return;
         }
+        if (isTimeMatched && time === 0){
+            showToast("Please select a time");
+            return;
+        }
         handleSubmit(secondKey.trim())
         setIsOrganiser(null);
         setSecondKey("");
+        setShowSetup(false)
     }
     
     function handleOrganiser(wantsOrganiser:boolean){
@@ -90,6 +91,8 @@ export default PlayerConnect;
 
 
 //old code remove when main page completely done
+// import GridSizeDropDown from "./GridSizeDropDown";
+// import TimerToggle from "./TimerToggle";
 // {!isConnected &&
 //     <div className="containera">
 //         <button onClick={()=>handleOrganiser(true)} className="button">

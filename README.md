@@ -8,9 +8,9 @@
 ## Bugs
 
 - [ ] Saved Grids can be loaded even when the game is started.
-- [ ] Game starts with the timer mode enabled but time not selected. 
+- [x] Game starts with the timer mode enabled but time not selected. 
 - [ ] Buttons should occupy the same height and width.
-- [ ] When clicked on show key change to hide key 
+- [x] When clicked on show key change to hide key 
 
 
 # React + TypeScript + Vite
