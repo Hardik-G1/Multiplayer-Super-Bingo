@@ -7,6 +7,7 @@
   - [ ] Dark theme
 - [ ] **Deploy**: Deploy on the domain.
 - [ ] **Create a Readme**: Description of the functionalities.
+- [ ] **Instead of Toasts have a log** : Create a log section for old and new activities
 
 ## Bugs
 
@@ -16,7 +17,9 @@
 - [x] When clicked on show key change to hide key 
 - [ ] Remove unused code/props and prop drilling
 - [x] Cannot exit until refresh for bad key
-- [ ] if both player tied proper handling of the game 
+- [x] if both player tied proper handling of the game 
+
+  - [ ] Testing needed (initial test passed)
 
 # React + TypeScript + Vite
 
