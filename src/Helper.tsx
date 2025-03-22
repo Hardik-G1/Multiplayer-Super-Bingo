@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { GridData, GridSize, SavedGridInfo } from "./DataTypes";
 
 export function getRandomFillData(size: GridSize){
@@ -74,3 +75,13 @@ export function getRandomFillData(size: GridSize){
     localStorage.setItem(key, serializedList);
 
   }
+
+    export function showToast(message:string){
+      toast(message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        });
+    } 

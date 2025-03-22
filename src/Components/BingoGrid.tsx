@@ -1,25 +1,39 @@
-import {  Dispatch, SetStateAction, useEffect, useState } from "react";
-import { GridData, GridSize, wordsMapping } from "../DataTypes";
-import "./css/Grid.css";
-import { getStraightLines, showToast } from "../Helper";
-import { WordWithStrikes } from "./WordWithStrikes";
+"use client"
+
+import { Dispatch, forwardRef, SetStateAction, useEffect, useState } from "react"
+import { GridData, GridSize, wordsMapping } from "../DataTypes"
+import CountdownTimer from "./Timer"
+import { TurnIndicator } from "./TurnIndicator"
+import { WinnerIndicator } from "./WinnerIndicator"
+import { getStraightLines, showToast } from "../Helper"
+
 interface GridProps {
-    gridSize:GridSize
-    isConnected: boolean;
-    yourTurn:boolean|null;
-    gridData:GridData[][];
-    setGridData:Dispatch<SetStateAction<GridData[][]>>;
-    setIsGridFull:Dispatch<SetStateAction<boolean>>;
-    isGridFull:boolean;
-    strikeNumber:(data:string)=>void;
-    GameFinished:(result:boolean,networkCall:boolean)=>void;
-    resetGame:boolean;
-    currentNumber:number;
-    setCurrentNumber:Dispatch<SetStateAction<number>>;
-    gameEnded:boolean;
-    SendWordStrikedFromOpponent:(data:string)=>void;
-  }
-function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame,SendWordStrikedFromOpponent}:GridProps){
+  gridSize:GridSize
+  isConnected: boolean;
+  yourTurn:boolean|null;
+  gridData:GridData[][];
+  setGridData:Dispatch<SetStateAction<GridData[][]>>;
+  setIsGridFull:Dispatch<SetStateAction<boolean>>;
+  isGridFull:boolean;
+  strikeNumber:(data:string)=>void;
+  GameFinished:(result:boolean,networkCall:boolean)=>void;
+  resetGame:boolean;
+  currentNumber:number;
+  setCurrentNumber:Dispatch<SetStateAction<number>>;
+  gameEnded:boolean;
+  SendWordStrikedFromOpponent:(data:string)=>void;
+  initialTime: number;
+  onComplete: () => void;
+  allReady: boolean;
+  won: boolean | null;
+}
+export interface CountdownTimerHandle {
+  startTimer: () => void;
+  pauseTimer: () => void;
+  resetTimer: (newTime: number) => void;
+}
+const BingoGrid = forwardRef<CountdownTimerHandle, GridProps>(({initialTime,onComplete,allReady,won,gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,currentNumber,setCurrentNumber,yourTurn,setIsGridFull,isGridFull,strikeNumber,resetGame,SendWordStrikedFromOpponent}:GridProps, ref) => {
+
     const [linesCount, setLinesCount] = useState(0);
     const word = wordsMapping[gridSize];
 
@@ -109,25 +123,45 @@ function Grid({gridData,setGridData,isConnected,GameFinished,gameEnded,gridSize,
       strikeNumber(gridData[rowIndex][colIndex].number);
       checkForLines();
     }
-    return(<>
-     {isConnected && (
-        <div className="grid-container">
-          {gridData.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid-row">
-              {row.map((cell, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`grid-cell ${cell.struck ? 'struck' : ''}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                >
-                  {cell.number}
-                </div>
-              ))}
+
+
+
+  return (
+    <>
+    {isConnected && (<div className="game-column main-column">
+      {initialTime>0 && <CountdownTimer ref={ref} initialTime={initialTime} onComplete={onComplete}/>}
+      <div className={`bingo-grid grid-${gridSize}`}>
+      {gridData.map((row, rowIndex) => (
+          row.map((cell, colIndex) => (
+            <div
+              key={colIndex}
+              className={`bingo-cell ${cell === null ? "empty" : ""} ${cell.struck  ? "selected" : ""}`}
+              onClick={() => handleCellClick(rowIndex, colIndex)}
+            >
+              {cell.number !== null && cell.number}
             </div>
-          ))}
-          <WordWithStrikes word={word} linesCount={linesCount} />
-        </div> 
-      )}
-    </>)
-}
-export default Grid;
+          )))
+        )}
+      </div>
+      <h2 className="bingo-title"> 
+      {word.split('').map((char, index) => (
+        <span key={index} className={index < linesCount ? 'struck' : ''}>
+          {char}
+        </span>
+      ))}
+      </h2>
+      <TurnIndicator
+        allReady={allReady}
+        gameEnded={gameEnded}
+        yourTurn={yourTurn}
+      />
+      <WinnerIndicator 
+        won={won}
+      />
+    </div> )
+  }
+</>
+  )
+});
+
+export default BingoGrid;

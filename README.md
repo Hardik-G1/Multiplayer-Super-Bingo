@@ -1,17 +1,22 @@
 
 ## To-Dos
-
-- [ ] **Design Components**: Design the components. 
+- [ ] **Architecture change** : Change the overall architecture
+- [ ] **Design Components**: Design the components.
+  - [x] 70% design done
+  - [ ] Timer , Turn Indicator, Grid for sizes 7 to 10 , Saved Grid column
+  - [ ] Dark theme
 - [ ] **Deploy**: Deploy on the domain.
 - [ ] **Create a Readme**: Description of the functionalities.
 
 ## Bugs
 
-- [ ] Saved Grids can be loaded even when the game is started.
+- [x] Saved Grids can be loaded even when the game is started.
 - [x] Game starts with the timer mode enabled but time not selected. 
-- [ ] Buttons should occupy the same height and width.
+- [x] Buttons should occupy the same height and width.
 - [x] When clicked on show key change to hide key 
-
+- [ ] Remove unused code/props and prop drilling
+- [x] Cannot exit until refresh for bad key
+- [ ] if both player tied proper handling of the game 
 
 # React + TypeScript + Vite
 

@@ -4,6 +4,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import "./css/PlayerConnect.css";
 import { GridSize } from "../DataTypes";
 import GameSetup from "./GameSetup";
+import { showToast } from "../Helper";
 interface ConnectProps {
     userKey: string;
     handleSubmit: (key:string) => void;
@@ -13,10 +14,9 @@ interface ConnectProps {
     setGridSize: React.Dispatch<SetStateAction<GridSize>>;
     time: number; 
     setTime: React.Dispatch<SetStateAction<number>>; 
-    showToast:(message:string)=>void;
   }
   
-function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,time,setTime,showToast}:ConnectProps){
+function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,setGridSize,time,setTime}:ConnectProps){
     const [isOrganiser,setIsOrganiser]=useState<boolean|null>(null);
     const [secondKey,setSecondKey]=useState("");
     const [showSetup, setShowSetup] = useState(false)

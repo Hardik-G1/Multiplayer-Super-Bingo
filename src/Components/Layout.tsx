@@ -14,7 +14,7 @@ export default function Layout({ children, title, footer }: LayoutProps) {
       </header>
 
       {children}
-
+      
       <footer className="footer">
         <p>{footer}</p>
       </footer>

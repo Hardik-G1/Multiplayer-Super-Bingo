@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { GameData } from "../DataTypes";
+import { showToast } from "../Helper";
 
-export const useGameEndHandler = (showToast:(message:string)=>void,SendRequest:(requestData:GameData)=>void)=>{
+export const useGameEndHandler = (SendRequest:(requestData:GameData)=>void)=>{
     const [won, setWon] = useState<boolean | null>(null);
     const [gameEnded, setGameEnded] = useState(false);
     const [resetGame, setResetGame] = useState(false);

@@ -51,7 +51,7 @@ const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(({ 
 
   return (
     <div>
-      <div>{formatTime(time)}</div>
+      {time>0  && <center>{formatTime(time)}</center>}
     </div>
   );
 });

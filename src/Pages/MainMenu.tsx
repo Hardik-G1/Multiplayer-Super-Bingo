@@ -1,23 +1,19 @@
 import { useCallback,  useEffect,  useRef,  useState } from "react";
-import Grid from "./Grid";
-import "./css/GameArea.css";
 import { usePeerConnection } from "../Hooks/PeerConnectionHook";
-import PlayerConnect from "./PlayerConnect";
-import ButtonArea from "./ButtonArea";
-import SavedGridsViewer from "./SavedGridsViewer";
-import { TurnIndicator } from "./TurnIndicator";
-import { WinnerIndicator } from "./WinnerIndicator";
+import PlayerConnect from "../Components/PlayerConnect";
 import { useGameStats } from "../Hooks/GameStats";
 import { useGameConnnection } from "../Hooks/GameConnection";
 import { useGameEndHandler } from "../Hooks/GameEndHandler";
 import { GameData, GameSetup, GridData, GridSize } from "../DataTypes";
 import { v4 as uuidv4 } from 'uuid';
-import CountdownTimer, { CountdownTimerHandle } from "./Timer";
 import { showToast } from "../Helper";
+import ControlPanel from "../Components/ControlPanel";
+import SavedCards from "../Components/SavedCards";
+import BingoGrid from "../Components/BingoGrid";
+import { CountdownTimerHandle } from "../Components/Timer";
 
-function GameArea(){
+export default function MainMenu(){
   const [userKey, _] = useState(uuidv4());
-  // const [gridSizeLock, setGridSizeLock] = useState(false);
   const [gridSize,setGridSize] = useState<GridSize>(5);
   const [showLoadScreen,setShowLoadScreen]=useState(false);
   const [gameTime, setGameTime]=useState(0);
@@ -198,13 +194,22 @@ function GameArea(){
     resetTimer(gamedata.duration)
   }
   return (
-    <>
-      <div className="App-grid">
+    <div>
+        <PlayerConnect  
+          isConnected={isConnected} 
+          resetGame={resetGame} 
+          handleSubmit={handleSubmit} 
+          userKey={userKey}
+          gridSize={gridSize}  
+          setGridSize={setGridSize}  
+          time={gameTime}
+          setTime={setGameTime}
+        />
 
-      {isConnected && gameTime>0 &&
-        <CountdownTimer ref={timerRef} initialTime={gameTime} onComplete={handleComplete} />
-      }
-        <Grid 
+       {isConnected && 
+       <div className="game-content">
+        <div className="game-container">
+        <BingoGrid 
           gridSize={gridSize} 
           gridData={gridData} 
           setGridData={setGridData}
@@ -218,51 +223,42 @@ function GameArea(){
           GameFinished={GameFinished} 
           yourTurn={yourTurn} 
           resetGame={resetGame} 
-          SendWordStrikedFromOpponent={SendWordStrikedFromOpponent}
-        />
-        <PlayerConnect  
-          isConnected={isConnected} 
-          resetGame={resetGame} 
-          handleSubmit={handleSubmit} 
-          userKey={userKey}
-          gridSize={gridSize}  
-          setGridSize={setGridSize}  
-          time={gameTime}
-          setTime={setGameTime}
-        />
-
-        <TurnIndicator
+          SendWordStrikedFromOpponent={SendWordStrikedFromOpponent} 
+          ref={timerRef} 
+          initialTime={gameTime}
+          onComplete={handleComplete}
           allReady={allReady}
-          gameEnded={gameEnded}
-          yourTurn={yourTurn}
-        />
-        <WinnerIndicator 
           won={won}
         />
+
+          <ControlPanel  
+            clearGrid={clearGrid} 
+            makeLoadSectionVisible={makeLoadSectionVisible} 
+            saveGrid={saveGrid} 
+            undo={undo} 
+            currentNumber={currentNumber} 
+            restartGame={restartGame} 
+            gameReset={ResetPeerConnection} 
+            randomFill={randomFill} 
+            gameEnded={gameEnded} 
+            isConnected={isConnected} 
+            isGridFull={isGridFull} 
+            allReady={allReady} 
+            selfReady={selfReady} 
+            readySignal={readySignal}
+          />
+          <SavedCards
+            setGridData={setGridData} 
+            gridSize={gridSize} 
+            showLoadScreen={showLoadScreen}  
+          />
+        </div>
       </div>
-     {isConnected && <>
-        <ButtonArea  
-        clearGrid={clearGrid} 
-        makeLoadSectionVisible={makeLoadSectionVisible} 
-        saveGrid={saveGrid} 
-        undo={undo} 
-        currentNumber={currentNumber} 
-        restartGame={restartGame} 
-        gameReset={ResetPeerConnection} 
-        randomFill={randomFill} 
-        gameEnded={gameEnded} 
-        isConnected={isConnected} 
-        isGridFull={isGridFull} 
-        allReady={allReady} 
-        selfReady={selfReady} 
-        readySignal={readySignal} 
-      />
-      <SavedGridsViewer 
-        setGridData={setGridData} 
-        gridSize={gridSize} 
-        showLoadScreen={showLoadScreen} 
-      /></>}
-    </>
-  );
+      
+      }
+    </div>
+  )
 }
-export default GameArea;
+
+
+

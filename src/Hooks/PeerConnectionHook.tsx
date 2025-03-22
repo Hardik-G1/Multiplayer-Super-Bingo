@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Peer, { DataConnection } from 'peerjs';
+import { showToast } from '../Helper';
 interface PeerConnectionProviderProps {
   setOrganiser:()=>void;
   HandleConnections: (peerId: string) => void;
@@ -7,7 +8,6 @@ interface PeerConnectionProviderProps {
   SendGameSetupData: () => void;
   gameReset: () => void;
   userKey:string;
-  showToast:(message:string)=>void;
 }
 export const usePeerConnection = ({
   setOrganiser,
@@ -16,7 +16,6 @@ export const usePeerConnection = ({
   SendGameSetupData,
   gameReset,
   userKey,
-  showToast
 }: PeerConnectionProviderProps) => {
   const peerRef = useRef<Peer | null>(null);
 const connRef = useRef<DataConnection | null>(null);
@@ -54,6 +53,8 @@ useEffect(() => {
         console.log("Connection closed with peer:", conn.peer);
         handleConnectionClose();
       });
+    }else{
+      console.log("Connection already established with peer:", conn.peer);
     }
   });
 }, []);
@@ -94,6 +95,9 @@ function handleSubmit(secondKey: string) {
     } else {
       console.log("Connection already established with second key:", secondKey);
     }
+  } else {
+    console.error("Peer not setup");
+    showToast("Peer not setup");
   }
 }
 
@@ -115,13 +119,14 @@ function handleConnectionError(){
   cleanPeer();
 };
 const handleConnectionClose = () => {
-  showToast("Disconnected from the Game");
   gameReset();
   cleanPeer();
 };
   function ResetPeerConnection(){
     connRef.current?.close();
     connRefPlayer2.current?.close();
+    showToast("Disconnected from the Game");
+    handleConnectionClose();
   }
   return {
     handleSubmit, connRef, connRefPlayer2 ,ResetPeerConnection,sendToPeer

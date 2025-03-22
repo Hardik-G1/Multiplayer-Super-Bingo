@@ -4,15 +4,15 @@ import GridPreview from './GridPreview';
 
 import "./css/SavedGridsViewer.css";
 import "./css/Grid.css";
+import { showToast } from '../Helper';
 
 export interface SavedGridsViewerProps {
   showLoadScreen: boolean;
   gridSize: GridSize;
   setGridData: Dispatch<SetStateAction<GridData[][]>>;
-  showToast:(message:string)=>void;
 }
 
-function SavedGridsViewer({ showLoadScreen, gridSize, setGridData,showToast }: SavedGridsViewerProps) {
+function SavedGridsViewer({ showLoadScreen, gridSize, setGridData }: SavedGridsViewerProps) {
   const [grids, setGrids] = useState<Array<{ name: string; data: GridData[][] }>>([]);
 
   useEffect(() => {

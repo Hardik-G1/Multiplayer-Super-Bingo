@@ -1,15 +1,9 @@
-import GameArea from './Components/GameArea';
+import LandingPage from './Pages/LandingPage';
 import './Root.css';
-import Layout from "./Components/Layout"
 function Root() {
   return (
     <div className="App">
-      <Layout
-      title={"Super Bingo"}
-      footer={"© 2025 Super Bingo. All rights reserved."}
-    >
-        <GameArea/>
-      </Layout>
+      <LandingPage />
     </div>
   );
 }

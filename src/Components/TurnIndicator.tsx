@@ -8,7 +8,7 @@ export interface TurnIndicatorProps {
 export const TurnIndicator: React.FC<TurnIndicatorProps> = ({ allReady, gameEnded,yourTurn }) => {
   return (
     <>
-    {allReady && !gameEnded && (yourTurn===true ? <p>It's your turn</p> : <p>It's opponent's turn</p>)}
+    {allReady && !gameEnded && (yourTurn===true ? <center>It's your turn</center> : <center>It's opponent's turn</center>)}
     </>
   );
 };
