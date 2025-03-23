@@ -19,10 +19,10 @@
   --text-muted: #a0a8b7;
   --blue-btn: #88c0d0; /* Teal accent */
   --blue-btn-hover: #8fbcbb;
-  --grid-bg: #f0f0f4; /* Light gray for grid background */
-  --cell-bg: #ffffff;
-  --cell-selected: #e6f7ff;
-  --cell-border: #dcdcdc;
+  --grid-bg: #2a2f3a; /* Dark background for grid */
+  --cell-bg: #3b4252; /* Darker cell background */
+  --cell-selected: #4c566a; /* Darker selected cell */
+  --cell-border: #434c5e; /* Dark border */
   --border-radius: 8px;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -334,7 +334,7 @@ body {
 }
 
 .main-column {
-  background-color: var(--grid-bg);
+  background-color: #302635;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -422,30 +422,30 @@ body {
   font-size: 1.5rem;
   font-weight: 500;
   cursor: pointer;
-  color: #333;
+  color: var(--text-color);
   transition: background-color 0.2s;
   border: 1px solid var(--cell-border);
 }
 
 .bingo-cell:hover {
-  background-color: #f5f5f5;
+  background-color: var(--secondary-hover);
 }
 
 .bingo-cell.empty {
-  background-color: transparent;
-  border: 1px dashed #ccc;
+  background-color: var(--secondary-color);
+  border: 1px dashed var(--text-muted);
   cursor: default;
 }
 
 .bingo-cell.selected {
   background-color: var(--cell-selected);
-  border-color: #91d5ff;
+  border-color: var(--blue-btn);
 }
 
 .bingo-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
   margin-top: 1rem;
 }
 
@@ -466,16 +466,16 @@ body {
 }
 
 .saved-card {
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: var(--border-radius);
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .saved-card h3 {
   margin-bottom: 0.5rem;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 .saved-card-grid {
@@ -487,11 +487,11 @@ body {
 
 .saved-number {
   font-size: 0.8rem;
-  background-color: #f5f5f5;
+  background-color: var(--cell-bg);
   border-radius: 4px;
   padding: 0.25rem;
   text-align: center;
-  color: #333;
+  color: var(--text-color);
 }
 
 .saved-card-actions {

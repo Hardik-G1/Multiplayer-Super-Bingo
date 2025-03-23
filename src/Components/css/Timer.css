@@ -1,0 +1,23 @@
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin: 0.25rem;
+}
+
+.timer-display {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-display::before {
+  content: "⏱";
+  font-size: 1.8rem;
+} 

@@ -178,8 +178,12 @@ export default function MainMenu(){
     // setGridSizeLock(lock);,lock:boolean
   }
 
-  function makeLoadSectionVisible(){
+  function makeLoadSectionVisible(hide:boolean){
+    if (hide){
+      setShowLoadScreen(false);
+    }else{
     setShowLoadScreen(prev=>!prev);
+    }
   }
 
   useEffect(()=>{},[isConnected,resetGame,gameTime])

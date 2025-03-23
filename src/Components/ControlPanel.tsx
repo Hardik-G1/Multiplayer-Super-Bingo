@@ -16,7 +16,7 @@ interface ButtonProps {
   undo: () => void;
   currentNumber: number;
   saveGrid: (name: string) => void;
-  makeLoadSectionVisible: () => void;
+  makeLoadSectionVisible: (hide:boolean) => void;
   clearGrid: () => void;
 }
 
@@ -61,12 +61,12 @@ export default function ControlPanel({
 
 
   const handleLoadClick = () => {
-    makeLoadSectionVisible();
+    makeLoadSectionVisible(false);
     setShowLoadScreenToggle(prev => !prev);
   };
   const ReadySignal=()=>{
     readySignal();
-    makeLoadSectionVisible();
+    makeLoadSectionVisible(true);
     setShowLoadScreenToggle(false);
   }
   const renderWaitingMessage = () => {

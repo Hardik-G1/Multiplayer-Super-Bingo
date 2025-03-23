@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import './css/Timer.css';
 
 interface CountdownTimerProps {
   initialTime: number;
@@ -50,8 +51,12 @@ const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(({ 
   };
 
   return (
-    <div>
-      {time>0  && <center>{formatTime(time)}</center>}
+    <div className="timer-container">
+      {time > 0 && (
+        <div className="timer-display">
+          {formatTime(time)}
+        </div>
+      )}
     </div>
   );
 });
