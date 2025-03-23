@@ -44,7 +44,8 @@ useEffect(() => {
         console.log("Connection opened with peer:", conn.peer);
       });
 
-      conn.on("error", () => {
+      conn.on("error", (err) => {
+        console.log("Connection error:", err);
         console.error("Connection error with peer:", conn.peer);
         handleConnectionError();
       });
@@ -83,7 +84,8 @@ function handleSubmit(secondKey: string) {
         handleGameData(data);
       });
 
-      conn.on("error", () => {
+      conn.on("error", (err) => {
+        console.log("Connection error:", err);
         console.error("Connection error with second key:", secondKey);
         handleConnectionError();
       });
