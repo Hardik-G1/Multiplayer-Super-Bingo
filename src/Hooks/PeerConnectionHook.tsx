@@ -45,8 +45,7 @@ useEffect(() => {
       });
 
       conn.on("error", (err) => {
-        console.log("Connection error:", err);
-        console.error("Connection error with peer:", conn.peer);
+        console.error("Connection error with peer:", conn.peer,err);
         handleConnectionError();
       });
 
@@ -84,9 +83,8 @@ function handleSubmit(secondKey: string) {
         handleGameData(data);
       });
 
-      conn.on("error", (err) => {
-        console.log("Connection error:", err);
-        console.error("Connection error with second key:", secondKey);
+      conn.on("error", (error) => {
+        console.error("Connection error with second key:", error);
         handleConnectionError();
       });
 
@@ -117,19 +115,19 @@ function cleanPeer(){
 }
 function handleConnectionError(){
   showToast("Connection Failed");
-  ResetPeerConnection();
+  connRef.current?.close();
+  connRefPlayer2.current?.close();
+  gameReset();
+  cleanPeer();
 };
 const handleConnectionClose = () => {
+
   gameReset();
   cleanPeer();
 };
   function ResetPeerConnection(){
-    if (connRef.current) {
-      connRef.current.close();
-    }
-    if (connRefPlayer2.current) {
-      connRefPlayer2.current.close();
-    }
+    connRef.current?.close();
+    connRefPlayer2.current?.close();
     showToast("Disconnected from the Game");
     handleConnectionClose();
   }
