@@ -2,9 +2,10 @@
 ## To-Dos
 - [ ] **Architecture change** : Change the overall architecture
 - [ ] **Design Components**: Design the components.
-  - [x] 70% design done
-  - [ ] Timer , Turn Indicator, Grid for sizes 7 to 10 , Saved Grid column
-  - [ ] Dark theme
+  - [x] 90% design done
+  - [x] Timer , Turn Indicator
+  - [ ] Grid for sizes 7 to 10 , Saved Grid column
+  - [x] Dark theme
 - [ ] **Deploy**: Deploy on the domain.
 - [ ] **Create a Readme**: Description of the functionalities.
 - [ ] **Instead of Toasts have a log** : Create a log section for old and new activities
