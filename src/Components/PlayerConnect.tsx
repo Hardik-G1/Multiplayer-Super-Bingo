@@ -21,6 +21,7 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
     const [secondKey,setSecondKey]=useState("");
     const [showSetup, setShowSetup] = useState(false)
     const [isTimeMatched, setIsTimeMatched] = useState(false);
+      const [isMobile, setIsMobile] = useState(false);
     
 
     const handleStartGame = (secondKey:string) => {
@@ -53,9 +54,37 @@ function PlayerConnect({userKey,handleSubmit,resetGame, isConnected,gridSize,set
         setIsOrganiser(null);
     },[resetGame,isConnected]);
 
+  // Add mobile check
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
     return (
         <>
+        {!isConnected &&  isMobile && (
+                <div style={{
+                  backgroundColor: '#ffd700',
+                  color: '#000',
+                  textAlign: 'center',
+                  padding: '8px',
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 1000,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  Please use WiFi connection to play the game.
+                </div>
+              )}
         {!isConnected && 
+              
     <div className="main-menu">
       <button className="btn primary-btn" onClick={()=>setShowSetup(true)}>
         <span className="icon">⊞</span> Setup a Game
