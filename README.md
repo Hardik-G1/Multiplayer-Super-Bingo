@@ -6,7 +6,7 @@
   - [x] Timer , Turn Indicator
   - [ ] Grid for sizes 7 to 10 , Saved Grid column
   - [x] Dark theme
-- [ ] **Deploy**: Deploy on the domain.
+- [x] **Deploy**: Deploy on the domain.
 - [ ] **Create a Readme**: Description of the functionalities.
 - [ ] **Instead of Toasts have a log** : Create a log section for old and new activities
 
@@ -54,9 +54,9 @@ export default {
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
 ## Current Design
-![alt text](images/1.png "Title")
-![alt text](images/2.png "Options")
-![alt text](images/3.png "Grid")
-![alt text](images/4.png "Load saved grids")
-![alt text](images/5.png "Game in session")
+![alt text](images/1_new.png "Title")
+![alt text](images/2_new.png "Options")
+![alt text](images/3_new.png "Grid")
+![alt text](images/4_new.png "Load saved grids")
+![alt text](images/5_new.png "Game in session")
 
