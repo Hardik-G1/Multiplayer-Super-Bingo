@@ -117,16 +117,19 @@ function cleanPeer(){
 }
 function handleConnectionError(){
   showToast("Connection Failed");
-  gameReset();
-  cleanPeer();
+  ResetPeerConnection();
 };
 const handleConnectionClose = () => {
   gameReset();
   cleanPeer();
 };
   function ResetPeerConnection(){
-    connRef.current?.close();
-    connRefPlayer2.current?.close();
+    if (connRef.current) {
+      connRef.current.close();
+    }
+    if (connRefPlayer2.current) {
+      connRefPlayer2.current.close();
+    }
     showToast("Disconnected from the Game");
     handleConnectionClose();
   }
